@@ -18,14 +18,36 @@
         <h1 class="title">
             Ringcode tag generator
         </h1>
-        <canvas id="canvas" width="550" height="550"></canvas>
-        <div class="field">
-            <div class="control">
-                <label class="label" for="method">Type</label>
-                <select class="select" id="method">
-                    <option value="bw" selected>Black</option>
-                    <option value="colored">Black, magenta, cyan, white</option>
-                </select>
+        <div class="flex">
+            <div class="field">
+                <canvas id="canvas" width="550" height="550"></canvas>
+            </div>
+            <div class="side">
+                <div class="field">
+                    <div class="control">
+                        <label class="label" for="method">Type</label>
+                        <select class="select" id="method">
+                            <option value="bw" selected>Black</option>
+                            <option value="colored">Black, magenta, cyan, white</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <label class="label" for="type">Input type</label>
+                        <select class="select" id="type">
+                            <option value="bin" selected>Binary</option>
+                            <option value="dec" selected>Decimal</option>
+                            <option value="text">Text (UTF-8)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <label class="label" for="raw">Raw data (hex)</label>
+                        <textarea class="textarea" id="raw" readonly></textarea>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="field">
