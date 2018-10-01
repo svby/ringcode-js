@@ -23,7 +23,6 @@ function segments(layer) {
     // return Math.ceil(ideal);
     switch (layer) {
         case 1:
-
         case 2:
             return 8;
         case 3:
