@@ -64,9 +64,6 @@ function generate(bytes, method) {
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-
     const data = bytes || getBytes(document.getElementById("data").value);
 
     console.log(byteString(data));
@@ -76,6 +73,7 @@ function generate(bytes, method) {
     ctx.moveTo(0, 0);
 
     ctx.lineWidth = arcWidth;
+    ctx.fillStyle = ctx.strokeStyle = "#000000";
 
     method(data, canvas, ctx);
 
