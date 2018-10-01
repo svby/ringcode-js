@@ -23,9 +23,9 @@ const colored = (bytes, canvas, ctx) => {
 
     console.log(byteString(data));
 
-    for (let bit = 0; bit < data.length * 8; bit += 3) {
+    for (let bit = 0; bit < data.length * 8; bit += 2) {
         const interval = 2 * Math.PI / total;
-        const bits = [getBit(data, bit), getBit(data, bit + 1), getBit(data, bit + 2)];
+        const bits = [getBit(data, bit), getBit(data, bit + 1)];
         console.log(bits);
         let color;
         if (bits[0] === 1 && bits[1] === 1) {
