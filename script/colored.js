@@ -7,7 +7,7 @@ const colors = Object.freeze([
     color1, color2, color3, color4
 ]);
 
-const coloredQuad = (bytes, canvas, ctx) => {
+const colored = (bytes, canvas, ctx) => {
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
 
@@ -36,7 +36,7 @@ const coloredQuad = (bytes, canvas, ctx) => {
             color = color1;
         } else if (bits[0] === 0 && bits[1] === 0) {
         }
-        if (color !== undefined) {
+        if (typeof color !== "undefined") {
             ctx.strokeStyle = color;
             ctx.lineWidth = arcWidth;
             ctx.beginPath();
