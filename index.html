@@ -26,20 +26,24 @@
                 <div class="field">
                     <div class="control">
                         <label class="label" for="method">Type</label>
-                        <select class="select" id="method">
-                            <option value="bw" selected>Black</option>
-                            <option value="colored">Black, magenta, cyan, white</option>
-                        </select>
+                        <div class="select">
+                            <select id="method">
+                                <option value="bw" selected>Black</option>
+                                <option value="colored">Black, magenta, cyan, white</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="field">
                     <div class="control">
                         <label class="label" for="type">Input type</label>
-                        <select class="select" id="type">
-                            <option value="bin" selected>Binary</option>
-                            <option value="dec" selected>Decimal</option>
-                            <option value="text">Text (UTF-8)</option>
-                        </select>
+                        <div class="select">
+                            <select id="type">
+                                <option value="bin" selected>Binary</option>
+                                <option value="dec" selected>Decimal</option>
+                                <option value="text">Text (UTF-8)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="field">
@@ -54,9 +58,12 @@
             <label class="label" for="data">Data</label>
             <textarea class="textarea is-normal" id="data"></textarea>
         </div>
-        <div class="field">
+        <div class="field is-grouped">
             <div class="control">
-                <button class="button is-link" onclick="run()">Generate</button>
+                <button class="button is-success" onclick="run()">Generate</button>
+            </div>
+            <div class="control">
+                <button class="button is-link" onclick="run()">Download</button>
             </div>
         </div>
         <script>run();</script>
