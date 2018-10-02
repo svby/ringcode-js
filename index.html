@@ -8,11 +8,10 @@
     <script defer src="https://use.fontawesome.com/releases/v5.1.0/js/all.js"></script>
     <link rel="stylesheet" href="style/main.css">
     <script src="script/bigint/BigInteger.min.js"></script>
-    <script src="script/data.js"></script>
-    <script src="script/ringcode.js"></script>
-    <script src="script/bw.js"></script>
-    <script src="script/colored.js"></script>
-    <script src="script/script.js"></script>
+    <script type="module" src="script/draw.js"></script>
+    <script type="module" src="script/generator/bwGenerator.js"></script>
+    <script type="module" src="script/generator/cmyGenerator.js"></script>
+    <script type="module" src="script/script.js"></script>
 </head>
 <body>
 <section class="section">
@@ -31,7 +30,7 @@
                         <div class="select">
                             <select id="method">
                                 <option value="bw" selected>Black</option>
-                                <option value="colored">Black, magenta, cyan, white</option>
+                                <option value="cmy">CMY</option>
                             </select>
                         </div>
                     </div>
@@ -63,13 +62,12 @@
         </div>
         <div class="field is-grouped">
             <div class="control">
-                <button class="button is-success" onclick="run()">Generate</button>
+                <button class="button is-success" id="run">Generate</button>
             </div>
             <div class="control">
-                <button class="button is-link" onclick="run()">Download</button>
+                <button class="button is-link">Download</button>
             </div>
         </div>
-        <script>init();</script>
     </div>
 </section>
 </body>
