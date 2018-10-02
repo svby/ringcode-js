@@ -1,5 +1,9 @@
 const Utf8Adapter = class {
 
+    isValid(text) {
+        return true;
+    }
+
     constructor() {
         this.encoder = new TextEncoder();
         this.decoder = new TextDecoder();
@@ -16,6 +20,10 @@ const Utf8Adapter = class {
 };
 
 const DecimalAdapter = class {
+
+    isValid(text) {
+        return text.match(/^[+-]?[0-9\s]*$/g);
+    }
 
     encode(text) {
         let big = new bigInt(text);
@@ -39,6 +47,10 @@ const DecimalAdapter = class {
 };
 
 const BinaryAdapter = class {
+
+    isValid(text) {
+        return text.match(/^[+-]?[01\s]*$/g);
+    }
 
     encode(text) {
         const bytes = new Uint8Array(Math.ceil(text.length / 8));
