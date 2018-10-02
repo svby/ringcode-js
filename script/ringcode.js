@@ -1,5 +1,5 @@
 const minArcLength = 35;
-const arcDepth = 40;
+const arcDepth = 35;
 const arcWidth = 30;
 const startAngle = 3 / 2 * Math.PI;
 

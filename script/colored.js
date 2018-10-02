@@ -14,6 +14,7 @@ const colored = (bytes, canvas, ctx) => {
     const data = bytes || getBytes(document.getElementById("data").value);
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.moveTo(0, 0);
 
@@ -33,7 +34,7 @@ const colored = (bytes, canvas, ctx) => {
         } else if (bits[0] === 0 && bits[1] === 1) {
             color = color3;
         } else if (bits[0] === 1 && bits[1] === 0) {
-            color = color1;
+            color = color2;
         } else if (bits[0] === 0 && bits[1] === 0) {
         }
         if (typeof color !== "undefined") {
