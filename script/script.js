@@ -10,18 +10,22 @@ const adapters = Object.freeze({
     "utf8": new Utf8Adapter()
 });
 
+let bytes;
+
 function run() {
     const select = document.getElementById("method");
     const value = select.value;
     const method = methods[value];
-    if (typeof method === "undefined") return;
-    generate(null, method);
+    if (!method) {
+        console.error(`Generator ${value} not found`);
+        return;
+    }
+    generate(bytes, method);
 }
-
-let bytes;
 
 function dataChanged(data) {
     const rawData = document.getElementById("raw");
+    const dataArea = document.getElementById("data");
     const type = document.getElementById("type");
     console.log("Data changed, encoding new value");
 
@@ -31,13 +35,29 @@ function dataChanged(data) {
         return;
     }
 
-    bytes = adapter.encode(data);
+    const errorP = document.getElementById("invalidData");
+    if (!data) {
+        errorP.classList.add("is-hidden");
+        dataArea.classList.remove("is-danger");
+        bytes = null;
+        rawData.value = null;
+    } else if (adapter.isValid(data)) {
+        errorP.classList.add("is-hidden");
+        dataArea.classList.remove("is-danger");
 
-    rawData.value = adapters["hex"].decode(bytes);
+        bytes = adapter.encode(data);
+        rawData.value = adapters["hex"].decode(bytes);
+    } else {
+        errorP.classList.remove("is-hidden");
+        dataArea.classList.add("is-danger");
+        bytes = null;
+        rawData.value = null;
+    }
 }
 
 function typeChanged(type) {
     const data = document.getElementById("data");
+    const rawData = document.getElementById("raw");
     if (typeof bytes !== "undefined" && bytes !== null && bytes.length !== 0) {
         console.log(`Type changed to ${type}, decoding bytes to new type`);
         const adapter = adapters[type];
@@ -47,13 +67,13 @@ function typeChanged(type) {
             return;
         }
         data.value = adapter.decode(bytes);
+        rawData.value = adapters["hex"].decode(bytes);
     }
 
     dataChanged(data.value);
 }
 
 function init() {
-    const rawData = document.getElementById("raw");
     const type = document.getElementById("type");
     const data = document.getElementById("data");
     const listener = () => {

@@ -63,10 +63,6 @@ function generate(bytes, method) {
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
-    const data = bytes || getBytes(document.getElementById("data").value);
-
-    console.log(byteString(data));
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.moveTo(0, 0);
@@ -74,7 +70,7 @@ function generate(bytes, method) {
     ctx.lineWidth = arcWidth;
     ctx.fillStyle = ctx.strokeStyle = "#000000";
 
-    method(data, canvas, ctx);
+    method(bytes, canvas, ctx);
 
-    ctx.fillText(`${data.length} byte(s)`, 5, canvas.height - 5);
+    ctx.fillText(`${bytes.length} byte(s)`, 5, canvas.height - 5);
 }
