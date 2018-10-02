@@ -1,6 +1,14 @@
-const methods = Object.freeze({
-    "bw": bw,
-    "colored": colored
+import draw from './draw.js'
+import BwGenerator from './generator/bwGenerator.js'
+import CmyGenerator from './generator/cmyGenerator.js'
+import BinaryAdapter from './adapter/binaryAdapter.js'
+import DecimalAdapter from './adapter/decimalAdapter.js'
+import HexAdapter from './adapter/hexAdapter.js'
+import Utf8Adapter from './adapter/utf8Adapter.js'
+
+const generators = Object.freeze({
+    "bw": new BwGenerator(),
+    "cmy": new CmyGenerator()
 });
 
 const adapters = Object.freeze({
@@ -15,12 +23,12 @@ let bytes;
 function run() {
     const select = document.getElementById("method");
     const value = select.value;
-    const method = methods[value];
-    if (!method) {
+    const generator = generators[value];
+    if (!generator) {
         console.error(`Generator ${value} not found`);
         return;
     }
-    generate(bytes, method);
+    draw(bytes, generator);
 }
 
 function dataChanged(data) {
@@ -76,12 +84,18 @@ function typeChanged(type) {
 function init() {
     const type = document.getElementById("type");
     const data = document.getElementById("data");
+    const runButton = document.getElementById("run");
+
     const listener = () => {
         dataChanged(data.value);
     };
     data.addEventListener("change", listener);
     data.addEventListener("keyup", listener);
     type.addEventListener("change", () => typeChanged(type.value));
+    runButton.addEventListener("click", run);
+
     listener();
     run();
 }
+
+init();
