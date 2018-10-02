@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.1.0/js/all.js"></script>
     <link rel="stylesheet" href="style/main.css">
+    <script src="http://peterolson.github.com/BigInteger.js/BigInteger.min.js"></script>
     <script src="script/ringcode.js"></script>
     <script src="script/bw.js"></script>
     <script src="script/colored.js"></script>
@@ -39,9 +40,9 @@
                         <label class="label" for="type">Input type</label>
                         <div class="select">
                             <select id="type">
-                                <option value="bin" selected>Binary</option>
-                                <option value="dec" selected>Decimal</option>
-                                <option value="text">Text (UTF-8)</option>
+                                <option value="bin">Binary</option>
+                                <option value="dec">Decimal</option>
+                                <option value="utf8" selected>Text (UTF-8)</option>
                             </select>
                         </div>
                     </div>
@@ -66,7 +67,7 @@
                 <button class="button is-link" onclick="run()">Download</button>
             </div>
         </div>
-        <script>run();</script>
+        <script>init();</script>
     </div>
 </section>
 </body>
