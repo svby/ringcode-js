@@ -10,3 +10,13 @@ div.flex div.side {
     flex-grow: 1;
     margin: 10px 20px;
 }
+
+.center-vert {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.center-vert div {
+    width: 200px;
+}
