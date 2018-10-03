@@ -35,6 +35,8 @@ function dataChanged(data) {
     const rawData = document.getElementById("raw");
     const dataArea = document.getElementById("data");
     const type = document.getElementById("type");
+    const auto = document.getElementById("auto");
+
     console.log("Data changed, encoding new value");
 
     const adapter = adapters[type.value];
@@ -60,6 +62,11 @@ function dataChanged(data) {
         dataArea.classList.add("is-danger");
         bytes = null;
         rawData.value = null;
+    }
+
+    if (auto.checked) {
+        // TODO workers?
+        run();
     }
 }
 
