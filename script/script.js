@@ -28,7 +28,19 @@ function run() {
         console.error(`Generator ${value} not found`);
         return;
     }
-    draw(bytes, generator);
+    if (bytes) draw(bytes, generator);
+}
+
+function download() {
+    const canvas = document.getElementById("canvas");
+    if (!canvas) return;
+
+    let link = document.createElement("a");
+    link.download = "ringcode.png";
+    link.href = canvas.toDataURL();
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 function dataChanged(data) {
@@ -73,6 +85,7 @@ function dataChanged(data) {
 function typeChanged(type) {
     const data = document.getElementById("data");
     const rawData = document.getElementById("raw");
+
     if (typeof bytes !== "undefined" && bytes !== null && bytes.length !== 0) {
         console.log(`Type changed to ${type}, decoding bytes to new type`);
         const adapter = adapters[type];
@@ -91,7 +104,10 @@ function typeChanged(type) {
 function init() {
     const type = document.getElementById("type");
     const data = document.getElementById("data");
+    const method = document.getElementById("method");
     const runButton = document.getElementById("run");
+    const dlButton = document.getElementById("dl");
+    const auto = document.getElementById("auto");
 
     const listener = () => {
         dataChanged(data.value);
@@ -100,6 +116,13 @@ function init() {
     data.addEventListener("keyup", listener);
     type.addEventListener("change", () => typeChanged(type.value));
     runButton.addEventListener("click", run);
+    dlButton.addEventListener("click", download);
+    method.addEventListener("change", () => {
+        if (auto.checked) run();
+    });
+    auto.addEventListener("change", () => {
+        if (auto.checked) run();
+    });
 
     listener();
     run();
