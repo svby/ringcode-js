@@ -33,6 +33,6 @@ export function segments(layer) {
 
 export function getBit(bytes, index) {
     if (index > bytes.length * 8) return 0;
-    const byte = bytes[Math.floor(index / 8)];
+    const byte = bytes[bytes.length - 1 - Math.floor(index / 8)];
     return (byte >> (index % 8)) & 1;
 }

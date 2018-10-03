@@ -27,7 +27,8 @@ export default class BwGenerator {
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, util.arcRadius(layer),
                     util.config.startAngle + segment * interval,
-                    util.config.startAngle + (segment + 1) * interval);
+                    util.config.startAngle + (segment + 1) * interval,
+                    false);
                 ctx.stroke();
             } else {
                 // TODO

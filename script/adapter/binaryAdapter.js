@@ -5,10 +5,26 @@ export default class BinaryAdapter {
     }
 
     encode(text) {
-        const bytes = new Uint8Array(Math.ceil(text.length / 8));
+        let bits = [];
+        let leading = true;
         for (let i = 0; i < text.length; i++) {
-            const value = text[i] === '1' ? 1 : 0;
-            bytes[Math.floor(i / 8)] |= (value << (7 - i % 8));
+            const char = text[i];
+            if (char.match(/^\\w$/)) continue;
+
+            if (char === '1') {
+                bits.push(1);
+                leading = false;
+            } else if (char === '0' && !leading) bits.push(0);
+        }
+
+        const bytes = new Uint8Array(Math.ceil(bits.length / 8));
+
+        for (let i = 0; i < bits.length; i++) {
+            let byteIndex = Math.floor(i / 8);
+            let bitIndex = i % 8;
+            if (bits[bits.length - 1 - i] === 1) {
+                bytes[bytes.length - byteIndex - 1] |= (1 << bitIndex);
+            }
         }
 
         return bytes;
