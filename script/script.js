@@ -1,6 +1,7 @@
 import draw from './draw.js'
 import BwGenerator from './generator/bwGenerator.js'
 import CmyGenerator from './generator/cmyGenerator.js'
+import RgbGenerator from './generator/rgbGenerator.js'
 import BinaryAdapter from './adapter/binaryAdapter.js'
 import DecimalAdapter from './adapter/decimalAdapter.js'
 import HexAdapter from './adapter/hexAdapter.js'
@@ -8,7 +9,8 @@ import Utf8Adapter from './adapter/utf8Adapter.js'
 
 const generators = Object.freeze({
     "bw": new BwGenerator(),
-    "cmy": new CmyGenerator()
+    "cmy": new CmyGenerator(),
+    "rgb": new RgbGenerator()
 });
 
 const adapters = Object.freeze({
