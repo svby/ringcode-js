@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ringcode | read</title>
-    <script async src="https://docs.opencv.org/master/opencv.js" type="text/javascript"></script>
+    <script type="module" src="script/reader/script.js"></script>
+    <script id="cv" async defer src="script/reader/opencv.min.js" type="text/javascript"></script>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.1.0/js/all.js"></script>
     <link rel="stylesheet" href="style/main.css">
     <link rel="stylesheet" href="style/github-corners.css"/>
-    <script type="module" src="script/reader/script.js"></script>
 </head>
 <body>
 <div class="footer-flex">
@@ -66,18 +66,21 @@
                             </div>
                         </div>
                     </div>
+                    <p>
+                        <b>Note:</b> The reader is currently a work in progress and is not yet complete.
+                    </p>
                 </div>
             </div>
             <div class="field">
                 <label class="label" for="data">Data</label>
-                <textarea class="textarea is-normal" id="data"></textarea>
+                <textarea class="textarea is-normal" id="data" disabled></textarea>
                 <p id="invalidData" class="help is-danger is-hidden">This value is invalid</p>
             </div>
-            <div class="field is-grouped">
-                <div class="control">
-                    <button class="button is-primary" id="run">Detect</button>
-                </div>
-            </div>
+            <!--<div class="field is-grouped">-->
+            <!--<div class="control">-->
+            <!--<button class="button is-primary" id="run">Detect</button>-->
+            <!--</div>-->
+            <!--</div>-->
         </div>
     </section>
     <footer class="footer">
