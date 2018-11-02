@@ -1,3 +1,7 @@
+html, body {
+    height: 100%;
+}
+
 canvas#canvas {
     border: 1px solid gray;
 }
@@ -19,4 +23,38 @@ div.flex div.side {
 
 .center-vert div {
     width: 200px;
+}
+
+div.footer-flex {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+div.footer-flex section {
+    flex: 1 0 auto;
+}
+
+div.footer-flex footer {
+    flex-shrink: 0;
+    padding: 1rem;
+}
+
+div#title-with-link {
+    display: flex;
+    justify-items: center;
+    align-items: baseline;
+    margin-bottom: 15px;
+}
+
+div#title-with-link h1 {
+    display: inline;
+    margin: 0;
+    font-family: "Ubuntu Mono", monospace;
+}
+
+div#title-with-link a {
+    margin-left: 25px;
+    font-weight: bolder;
+    font-family: "Ubuntu Mono", monospace;
 }
