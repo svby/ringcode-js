@@ -1,4 +1,5 @@
 import processSquare from "./processSquare.js";
+import process0 from "./process0.js";
 
 export default function preprocessSquare(image, display) {
     let gray;
@@ -61,7 +62,7 @@ export default function preprocessSquare(image, display) {
             bestCircle = {
                 x: x,
                 y: y,
-                radius: radius
+                radius: radius + 1
             };
         }
     }
@@ -133,7 +134,9 @@ export default function preprocessSquare(image, display) {
     white.delete();
     hsv.delete();
 
-    processSquare(res, display);
+    const result = process0(res, bestCircle, display);
 
     res.delete();
+
+    return result;
 }
