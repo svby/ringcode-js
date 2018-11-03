@@ -23,6 +23,14 @@ export default class CmyGenerator {
         return util.layers(bits, 2);
     }
 
+    drawAnchor(canvas, ctx) {
+        ctx.beginPath();
+        ctx.fillStyle = this.foregroundTextColor;
+        ctx.lineWidth = 1;
+        ctx.arc(canvas.width / 2, canvas.height / 2, util.arcRadius(0), 0, 2 * Math.PI);
+        ctx.fill();
+    }
+
     generate(data, canvas, ctx) {
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
@@ -43,6 +51,7 @@ export default class CmyGenerator {
             } else if (bits[0] === 1 && bits[1] === 0) {
                 color = color2;
             } else if (bits[0] === 0 && bits[1] === 0) {
+                //color = "#FFFFFF";
             }
             if (typeof color !== "undefined") {
                 ctx.strokeStyle = color;
@@ -57,6 +66,13 @@ export default class CmyGenerator {
                 segment = 0;
                 total = util.segments(layer);
             }
+
+            // ctx.beginPath();
+            // ctx.strokeStyle = "#FFFFFF";
+            // const w = 10;
+            // ctx.lineWidth = w;
+            // ctx.arc(centerX, centerY, util.arcRadius(top-1) + util.config.arcWidth/2+w/2, 0, 2*Math.PI);
+            // ctx.stroke();
         }
     }
 

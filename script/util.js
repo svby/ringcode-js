@@ -1,14 +1,14 @@
 export let config = {
     minArcLength: 35,
-    arcDepth: 35,
-    arcWidth: 30,
+    arcDepth: 30,
+    arcWidth: 25,
     startAngle: 3 / 2 * Math.PI,
     anchorOffset: 50,
     anchorSize: 100
 };
 
 export function arcRadius(layer) {
-    return config.arcDepth * layer - 5;
+    return layer === 0 ? (config.arcWidth) : (config.arcDepth * layer + config.arcWidth / 2);
 }
 
 export function innerArcLength(layer) {
