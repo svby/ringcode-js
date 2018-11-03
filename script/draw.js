@@ -7,6 +7,8 @@ export default function draw(bytes, generator) {
     pageCtx.fillStyle = generator.backgroundColor || "#FFFFFF";
     pageCtx.fillRect(0, 0, canvas.width, canvas.height);
 
+    const size = bytes ? bytes.length : 0;
+
     if (bytes) {
         const layers = generator.getLayers(bytes.length * 8);
         const radius = util.arcRadius(Math.max(layers, 5)) + util.config.arcWidth / 2;
@@ -27,22 +29,18 @@ export default function draw(bytes, generator) {
         generator.generate(bytes, canvas, ctx);
 
         pageCtx.drawImage(canvas, 0, 0, pageCanvas.width, pageCanvas.height);
-
-        pageCtx.beginPath();
-        const anchorOffset = 50;
-        const anchorLength = 100;
-        pageCtx.lineTo(anchorOffset, anchorOffset);
-        pageCtx.lineTo(anchorOffset + anchorLength, anchorOffset);
-        pageCtx.lineTo(anchorOffset, anchorOffset + anchorLength);
-        pageCtx.fillStyle = generator.foregroundTextColor || "#000000";
-        pageCtx.fill();
-
-        pageCtx.fillStyle = generator.foregroundTextColor || "#000000";
-        const length = bytes.length;
-        pageCtx.fillText(bytes.length === 1 ? "1 byte" : `${length} bytes`, 5, pageCanvas.height - 5);
-    } else {
-
-        pageCtx.fillStyle = generator.foregroundTextColor || "#000000";
-        pageCtx.fillText(`0 bytes`, 5, pageCanvas.height - 5);
     }
+
+    // Draw anchor
+    pageCtx.beginPath();
+    const anchorOffset = 50;
+    const anchorLength = 100;
+    pageCtx.lineTo(anchorOffset, anchorOffset);
+    pageCtx.lineTo(anchorOffset + anchorLength, anchorOffset);
+    pageCtx.lineTo(anchorOffset, anchorOffset + anchorLength);
+    pageCtx.fillStyle = generator.foregroundTextColor || "#000000";
+    pageCtx.fill();
+
+    pageCtx.fillStyle = generator.foregroundTextColor || "#000000";
+    pageCtx.fillText(size === 1 ? "1 byte" : `${size} bytes`, 5, pageCanvas.height - 5);
 }
