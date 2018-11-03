@@ -28,8 +28,11 @@ export default function processSquare(image, display) {
 
     let houghWhite = white.clone();
 
-    cv.GaussianBlur(houghWhite, houghWhite, new cv.Size(9, 9), 2, 2);
+    cv.blur(houghWhite, houghWhite, new cv.Size(9, 9));
+    // cv.GaussianBlur(houghWhite, houghWhite, new cv.Size(9, 9), 2, 2);
     cv.HoughCircles(houghWhite, circles, cv.HOUGH_GRADIENT, 1, houghWhite.rows / 8, 100, 50, 0, 0);
+
+    display(houghWhite);
 
     houghWhite.delete();
 
