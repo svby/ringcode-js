@@ -1,4 +1,4 @@
-import * as util from './util.js'
+import * as util from '../util.js'
 
 export default function draw(bytes, generator) {
     const pageCanvas = document.getElementById("canvas");
