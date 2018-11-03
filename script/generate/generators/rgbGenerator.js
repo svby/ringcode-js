@@ -23,6 +23,14 @@ export default class CmyGenerator {
         return util.layers(bits, 2);
     }
 
+    drawAnchor(canvas, ctx) {
+        ctx.beginPath();
+        ctx.fillStyle = this.foregroundTextColor;
+        ctx.lineWidth = 1;
+        ctx.arc(canvas.width / 2, canvas.height / 2, util.arcRadius(0), 0, 2 * Math.PI);
+        ctx.fill();
+    }
+
     generate(data, canvas, ctx) {
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
