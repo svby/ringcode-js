@@ -1,7 +1,7 @@
-import processSquare from "./processSquare.js";
+import preprocessSquare from "./preprocessSquare.js";
 
 export default function detectSquare(img, display) {
     // TODO
 
-    return processSquare(img, display);
+    return preprocessSquare(img, display);
 }
