@@ -4,36 +4,45 @@ export default function draw(bytes, generator) {
     const pageCanvas = document.getElementById("canvas");
     const pageCtx = pageCanvas.getContext("2d");
 
-    const layers = generator.getLayers(bytes.length * 8);
-    const radius = util.arcRadius(Math.max(layers, 5)) + util.config.arcWidth / 2;
+    pageCtx.fillStyle = generator.backgroundColor || "#FFFFFF";
+    pageCtx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const canvas = document.createElement("canvas");
-    canvas.width = canvas.height = radius * 2 + util.config.arcWidth * 4;
+    if (bytes) {
+        const layers = generator.getLayers(bytes.length * 8);
+        const radius = util.arcRadius(Math.max(layers, 5)) + util.config.arcWidth / 2;
 
-    const ctx = canvas.getContext("2d");
+        const canvas = document.createElement("canvas");
+        canvas.width = canvas.height = radius * 2 + util.config.arcWidth * 4;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = generator.backgroundColor || "#FFFFFF";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+        const ctx = canvas.getContext("2d");
 
-    ctx.moveTo(0, 0);
+        ctx.fillStyle = generator.backgroundColor || "#FFFFFF";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.lineWidth = util.config.arcWidth;
-    ctx.fillStyle = ctx.strokeStyle = "#000000";
+        ctx.moveTo(0, 0);
 
-    generator.generate(bytes, canvas, ctx);
+        ctx.lineWidth = util.config.arcWidth;
+        ctx.fillStyle = ctx.strokeStyle = "#000000";
 
-    pageCtx.drawImage(canvas, 0, 0, pageCanvas.width, pageCanvas.height);
+        generator.generate(bytes, canvas, ctx);
 
-    pageCtx.beginPath();
-    const anchorOffset = 50;
-    const anchorLength = 100;
-    pageCtx.lineTo(anchorOffset, anchorOffset);
-    pageCtx.lineTo(anchorOffset + anchorLength, anchorOffset);
-    pageCtx.lineTo(anchorOffset, anchorOffset + anchorLength);
-    pageCtx.fillStyle = generator.foregroundTextColor || "#000000";
-    pageCtx.fill();
+        pageCtx.drawImage(canvas, 0, 0, pageCanvas.width, pageCanvas.height);
 
-    pageCtx.fillStyle = generator.foregroundTextColor || "#000000";
-    pageCtx.fillText(`${bytes.length} byte(s)`, 5, pageCanvas.height - 5);
+        pageCtx.beginPath();
+        const anchorOffset = 50;
+        const anchorLength = 100;
+        pageCtx.lineTo(anchorOffset, anchorOffset);
+        pageCtx.lineTo(anchorOffset + anchorLength, anchorOffset);
+        pageCtx.lineTo(anchorOffset, anchorOffset + anchorLength);
+        pageCtx.fillStyle = generator.foregroundTextColor || "#000000";
+        pageCtx.fill();
+
+        pageCtx.fillStyle = generator.foregroundTextColor || "#000000";
+        const length = bytes.length;
+        pageCtx.fillText(bytes.length === 1 ? "1 byte" : `${length} bytes`, 5, pageCanvas.height - 5);
+    } else {
+
+        pageCtx.fillStyle = generator.foregroundTextColor || "#000000";
+        pageCtx.fillText(`0 bytes`, 5, pageCanvas.height - 5);
+    }
 }

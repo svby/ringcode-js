@@ -30,7 +30,7 @@ function run() {
         console.error(`Generator ${value} not found`);
         return;
     }
-    if (bytes) draw(bytes, generator);
+    draw(bytes, generator);
 }
 
 function download() {
