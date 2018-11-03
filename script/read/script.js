@@ -11,7 +11,10 @@ function process(source) {
 
         features = cv.imread(empty);
         image = cv.imread(source);
-        const res = detectSquare(image, display);
+
+        let bgr = new cv.Mat;
+        cv.cvtColor(image, bgr, cv.COLOR_BGRA2BGR);
+        const res = detectSquare(bgr, display);
         console.log(res);
 
         // gray = cv.Mat.zeros(image.rows, image.cols, cv.CV_8U);
@@ -86,7 +89,7 @@ function display(source) {
 
     const width = canvas.width, height = canvas.height;
 
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, width, height);
 
     const scale = Math.min(height / image.height, width / image.width);
