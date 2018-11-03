@@ -19,6 +19,10 @@ export default class CmyGenerator {
         return "#000000";
     }
 
+    getLayers(bits) {
+        return util.layers(bits, 2);
+    }
+
     generate(data, canvas, ctx) {
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
