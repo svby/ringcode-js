@@ -11,10 +11,10 @@ export default function draw(bytes, generator) {
 
     if (bytes) {
         const layers = generator.getLayers(bytes.length * 8);
-        const radius = util.arcRadius(Math.max(layers, 5)) + util.config.arcWidth / 2;
+        const radius = util.arcRadius(Math.max(layers, 5));
 
         const canvas = document.createElement("canvas");
-        canvas.width = canvas.height = radius * 2 + util.config.arcWidth * 4;
+        canvas.width = canvas.height = radius * 2;
 
         const ctx = canvas.getContext("2d");
 
@@ -28,13 +28,14 @@ export default function draw(bytes, generator) {
 
         generator.generate(bytes, canvas, ctx);
 
-        pageCtx.drawImage(canvas, 0, 0, pageCanvas.width, pageCanvas.height);
+        pageCtx.drawImage(canvas, util.config.anchorOffset, util.config.anchorOffset,
+            pageCanvas.width - util.config.anchorOffset * 2, pageCanvas.height - util.config.anchorOffset * 2);
     }
 
     // Draw anchor
     pageCtx.beginPath();
-    const anchorOffset = 50;
-    const anchorLength = 100;
+    const anchorOffset = util.config.anchorOffset;
+    const anchorLength = util.config.anchorSize;
     pageCtx.lineTo(anchorOffset, anchorOffset);
     pageCtx.lineTo(anchorOffset + anchorLength, anchorOffset);
     pageCtx.lineTo(anchorOffset, anchorOffset + anchorLength);

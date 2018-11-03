@@ -2,7 +2,9 @@ export let config = {
     minArcLength: 35,
     arcDepth: 35,
     arcWidth: 30,
-    startAngle: 3 / 2 * Math.PI
+    startAngle: 3 / 2 * Math.PI,
+    anchorOffset: 50,
+    anchorSize: 100
 };
 
 export function arcRadius(layer) {
