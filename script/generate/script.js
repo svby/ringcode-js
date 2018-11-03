@@ -1,11 +1,11 @@
 import draw from './draw.js'
-import BwGenerator from './generator/bwGenerator.js'
-import CmyGenerator from './generator/cmyGenerator.js'
-import RgbGenerator from './generator/rgbGenerator.js'
-import BinaryAdapter from './adapter/binaryAdapter.js'
-import DecimalAdapter from './adapter/decimalAdapter.js'
-import HexAdapter from './adapter/hexAdapter.js'
-import Utf8Adapter from './adapter/utf8Adapter.js'
+import BwGenerator from './generators/bwGenerator.js'
+import CmyGenerator from './generators/cmyGenerator.js'
+import RgbGenerator from './generators/rgbGenerator.js'
+import BinaryAdapter from '../adapter/binaryAdapter.js'
+import DecimalAdapter from '../adapter/decimalAdapter.js'
+import HexAdapter from '../adapter/hexAdapter.js'
+import Utf8Adapter from '../adapter/utf8Adapter.js'
 
 const generators = Object.freeze({
     "bw": new BwGenerator(),

@@ -1,9 +1,9 @@
-import * as util from '../util.js'
+import * as util from '../../util.js'
 
 const color1 = "#000000";
-const color2 = "#0000FF";
-const color3 = "#00FF00";
-const color4 = "#FF0000";
+const color2 = "#FFFF00";
+const color3 = "#FF00FF";
+const color4 = "#00FFFF";
 
 const colors = Object.freeze([
     color1, color2, color3, color4

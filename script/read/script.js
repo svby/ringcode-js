@@ -110,11 +110,6 @@ function setImage() {
 function init() {
     const uploader = document.getElementById("upload");
     uploader.addEventListener("change", setImage);
-
-    cv.Mat.toImage = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = c
-    };
 }
 
 const cvScript = document.getElementById("cv");
