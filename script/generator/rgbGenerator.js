@@ -34,7 +34,7 @@ export default class CmyGenerator {
         for (let bit = 0; bit < data.length * 8; bit += 2) {
             const interval = 2 * Math.PI / total;
             const bits = [util.getBit(data, bit), util.getBit(data, bit + 1)];
-            console.log(bits);
+
             let color;
             if (bits[0] === 1 && bits[1] === 1) {
                 color = color4;
