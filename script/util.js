@@ -15,6 +15,17 @@ export function innerArcLength(layer) {
     return 2 * Math.PI * innerDepth;
 }
 
+export function layers(bits, bitsPerSegment) {
+    let s = Math.ceil(bits / bitsPerSegment);
+    let layer = 1;
+    while (s > 0) {
+        const wedges = segments(layer);
+        s -= wedges;
+        layer++;
+    }
+    return layer;
+}
+
 export function segments(layer) {
     // const ideal = innerArcLength(layer) / minArcLength;
     // return Math.ceil(ideal);

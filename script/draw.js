@@ -1,7 +1,15 @@
 import * as util from './util.js'
 
 export default function draw(bytes, generator) {
-    const canvas = document.getElementById("canvas");
+    const pageCanvas = document.getElementById("canvas");
+    const pageCtx = pageCanvas.getContext("2d");
+
+    const layers = generator.getLayers(bytes.length * 8);
+    const radius = util.arcRadius(Math.max(layers, 5)) + util.config.arcWidth / 2;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = radius * 2 + util.config.arcWidth * 4;
+
     const ctx = canvas.getContext("2d");
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -15,6 +23,17 @@ export default function draw(bytes, generator) {
 
     generator.generate(bytes, canvas, ctx);
 
-    ctx.fillStyle = generator.foregroundTextColor || "#000000";
-    ctx.fillText(`${bytes.length} byte(s)`, 5, canvas.height - 5);
+    pageCtx.drawImage(canvas, 0, 0, pageCanvas.width, pageCanvas.height);
+
+    pageCtx.beginPath();
+    const anchorOffset = 50;
+    const anchorLength = 100;
+    pageCtx.lineTo(anchorOffset, anchorOffset);
+    pageCtx.lineTo(anchorOffset + anchorLength, anchorOffset);
+    pageCtx.lineTo(anchorOffset, anchorOffset + anchorLength);
+    pageCtx.fillStyle = generator.foregroundTextColor || "#000000";
+    pageCtx.fill();
+
+    pageCtx.fillStyle = generator.foregroundTextColor || "#000000";
+    pageCtx.fillText(`${bytes.length} byte(s)`, 5, pageCanvas.height - 5);
 }

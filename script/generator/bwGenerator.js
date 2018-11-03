@@ -10,6 +10,10 @@ export default class BwGenerator {
         return null;
     }
 
+    getLayers(bits) {
+        return util.layers(bits, 1);
+    }
+
     generate(data, canvas, ctx) {
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;

@@ -19,6 +19,10 @@ export default class CmyGenerator {
         return "#000000";
     }
 
+    getLayers(bits) {
+        return util.layers(bits, 2);
+    }
+
     generate(data, canvas, ctx) {
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
@@ -50,6 +54,7 @@ export default class CmyGenerator {
             segment++;
             if (segment === total) {
                 layer++;
+                console.log("up to layer " + layer);
                 segment = 0;
                 total = util.segments(layer);
             }
