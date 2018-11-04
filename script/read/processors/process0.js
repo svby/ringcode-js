@@ -39,56 +39,53 @@ export default function process0(reader, image, centerAnchor, cornerAnchor, conf
     config.log("p0", "Using ring processor process0");
     config.log("p0", `Using reader ${reader.name}`);
 
+    let buffer = [];
+
     let copy = image.clone();
-    try {
-        let buffer = [];
 
-        const scale = (centerAnchor.radius) / util.arcRadius(0);
-        config.log("p0", `Tag scale: ${scale}`);
+    const scale = (centerAnchor.radius) / util.arcRadius(0);
+    config.log("p0", `Tag scale: ${scale}`);
 
-        for (let layer = 1; layer <= 200; ++layer) {
-            const radius = util.arcRadius(layer) * scale;
-            if (centerAnchor.x - radius <= cornerAnchor || centerAnchor.y - radius <= cornerAnchor) {
-                break;
-            }
-            const segments = util.segments(layer);
-
-            const segmentDelta = 2 * Math.PI / segments;
-
-            for (let segment = 0; segment < segments; ++segment) {
-                const angle = segmentDelta * segment + (segmentDelta / 2);
-
-                const x = Math.round(Math.sin(angle) * radius);
-                const y = Math.round(Math.cos(angle) * radius);
-
-                const color = avgColor(copy, centerAnchor.x + x, centerAnchor.y - y);
-
-                cv.circle(copy, new cv.Point(centerAnchor.x + x, centerAnchor.y - y), 2, new cv.Scalar(255, 0, 0));
-
-                reader.process(buffer, color[0], color[1], color[2]);
-            }
+    for (let layer = 1; layer <= 200; ++layer) {
+        const radius = util.arcRadius(layer) * scale;
+        if (centerAnchor.x - radius <= cornerAnchor || centerAnchor.y - radius <= cornerAnchor) {
+            break;
         }
+        const segments = util.segments(layer);
 
-        config.log("p0", "Tag decoded to bit buffer");
+        const segmentDelta = 2 * Math.PI / segments;
 
-        config.displayStep(copy);
+        for (let segment = 0; segment < segments; ++segment) {
+            const angle = segmentDelta * segment + (segmentDelta / 2);
 
-        while (buffer.length !== 0 && buffer[buffer.length - 1] === 0) buffer.pop();
-        buffer.reverse();
+            const x = Math.round(Math.sin(angle) * radius);
+            const y = Math.round(Math.cos(angle) * radius);
 
-        let bits = new Uint8Array(Math.ceil(buffer.length / 8));
+            const color = avgColor(copy, centerAnchor.x + x, centerAnchor.y - y);
 
-        for (let i = 0; i < buffer.length; ++i) {
-            if (buffer[buffer.length - 1 - i] === 1) {
-                bits[bits.length - 1 - Math.floor(i / 8)] |= (1 << i % 8);
-            }
+            cv.circle(copy, new cv.Point(centerAnchor.x + x, centerAnchor.y - y), 2, new cv.Scalar(255, 0, 0));
+
+            reader.process(buffer, color[0], color[1], color[2]);
         }
-
-        config.log("p0", "Tag decoded to byte buffer");
-        config.log("p0", "Done");
-
-        return bits;
-    } finally {
-        copy.delete();
     }
+
+    config.log("p0", "Tag decoded to bit buffer");
+
+    config.displayStep(copy);
+
+    while (buffer.length !== 0 && buffer[buffer.length - 1] === 0) buffer.pop();
+    buffer.reverse();
+
+    let bits = new Uint8Array(Math.ceil(buffer.length / 8));
+
+    for (let i = 0; i < buffer.length; ++i) {
+        if (buffer[buffer.length - 1 - i] === 1) {
+            bits[bits.length - 1 - Math.floor(i / 8)] |= (1 << i % 8);
+        }
+    }
+
+    config.log("p0", "Tag decoded to byte buffer");
+    config.log("p0", "Done");
+
+    return bits;
 }

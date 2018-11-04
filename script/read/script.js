@@ -10,45 +10,45 @@ const readers = Object.freeze({
 function process(source) {
     display(source);
 
-    let image = cv.imread(source);
+    let image;
+
+    image = cv.imread(source);
+
+    log();
+
+    log("read", "Loaded image");
+
     let bgr = new cv.Mat;
-    try {
-        log();
+    cv.cvtColor(image, bgr, cv.COLOR_BGRA2BGR);
 
-        log("read", "Loaded image");
+    log("read", "Converted image to BGR color space");
 
-        cv.cvtColor(image, bgr, cv.COLOR_BGRA2BGR);
+    display(bgr);
 
-        log("read", "Converted image to BGR color space");
+    const res = detectSquare(readers["cmy"], bgr, {
+        steps: util.config.showSteps,
+        display: display,
+        displayStep: util.config.showSteps ? display : () => {
+        },
+        log: log
+    });
 
-        display(bgr);
+    log();
 
-        const res = detectSquare(readers["cmy"], bgr, {
-            steps: util.config.showSteps,
-            display: display,
-            displayStep: util.config.showSteps ? display : () => {
-            },
-            log: log
-        });
+    log("read", `result: ${res}`);
 
-        log();
-
-        log("read", `result: ${res}`);
-
-        if (res === null) {
-            log("read", "Aborted");
-        } else if (typeof res === "undefined") {
-            log("read", "The tag could not be scanned.")
-        } else {
-            const data = document.getElementById("data");
-            data.value = new Utf8Adapter().decode(res);
-        }
-    } finally {
-        image.delete();
-        bgr.delete();
+    if (res === null) {
+        log("read", "Aborted");
+    } else if (typeof res === "undefined") {
+        log("read", "The tag could not be scanned.")
+    } else {
+        const data = document.getElementById("data");
+        data.value = new Utf8Adapter().decode(res);
     }
 
     log("read", "Done");
+
+    image.delete();
 }
 
 function log(tag, message) {
@@ -60,6 +60,7 @@ function log(tag, message) {
 
 function matToCanvas(mat) {
     const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
     cv.imshow(canvas, mat);
 

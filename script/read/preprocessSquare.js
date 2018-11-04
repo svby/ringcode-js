@@ -1,200 +1,205 @@
-import * as util from "../util.js";
 import process0 from "./processors/process0.js";
+import * as util from "../util.js";
 
 export default function preprocessSquare(reader, image, config) {
     config.log();
 
-    let gray = cv.Mat.zeros(image.rows, image.cols, cv.CV_8U);
-    let copy = image.clone();
-    let circles = new cv.Mat;
-    let white = new cv.Mat;
+    let gray;
+    let copy;
+    let circles;
+    let white;
+    let hsv;
+
+    let low;
+    let high;
+
+    copy = image.clone();
+    gray = cv.Mat.zeros(image.rows, image.cols, cv.CV_8U);
+
+    white = new cv.Mat;
+    low = new cv.Mat(image.rows, image.cols, image.type(), new cv.Scalar(180, 180, 180));
+    high = new cv.Mat(image.rows, image.cols, image.type(), new cv.Scalar(255, 255, 255));
+
+    cv.inRange(image, low, high, white);
+
+    config.log("pp", "Applied white mask");
+
+    low.delete();
+    high.delete();
+
+    cv.bitwise_not(gray, gray);
+
+    cv.cvtColor(image, gray, cv.COLOR_BGR2GRAY, 0);
+
+    cv.GaussianBlur(gray, gray, new cv.Size(9, 9), 2, 2);
+
+    circles = new cv.Mat;
+
+    config.displayStep(white);
+
+    let houghWhite = white.clone();
+
+    cv.blur(houghWhite, houghWhite, new cv.Size(9, 9));
+    // cv.GaussianBlur(houghWhite, houghWhite, new cv.Size(9, 9), 2, 2);
+    cv.HoughCircles(houghWhite, circles, cv.HOUGH_GRADIENT, 1, houghWhite.rows / 8, 100, 50, 0, 0);
+
+    config.log("pp", "Applied Hough transform");
+
+    config.displayStep(houghWhite);
+
+    houghWhite.delete();
+
+    // Find the central anchor
+    let bestCircle = null;
+    let bestDist2 = Infinity;
+
+    for (let i = 0; i < circles.cols; ++i) {
+        const x = circles.data32F[i * 3];
+        const y = circles.data32F[i * 3 + 1];
+        const radius = circles.data32F[i * 3 + 2];
+
+        const xDiff = x - image.cols / 2;
+        const yDiff = y - image.rows / 2;
+
+        const centerDist2 = xDiff * xDiff + yDiff * yDiff;
+        if (centerDist2 < bestDist2) {
+            bestDist2 = centerDist2;
+            bestCircle = {
+                x: x,
+                y: y,
+                radius: radius + 1
+            };
+        }
+    }
+
+    if (bestCircle === null) {
+        config.log("pp", "No central anchor point found");
+        return null;
+    }
+    config.log("pp", "Central anchor point located");
+
+    cv.circle(copy, new cv.Point(bestCircle.x, bestCircle.y), bestCircle.radius, new cv.Scalar(255, 0, 0), 2);
+
+    config.displayStep(copy);
+
+    cv.GaussianBlur(white, white, new cv.Size(5, 5), 0);
+    // cv.adaptiveThreshold(white, white, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 11, 2);
+    cv.Canny(white, white, 80, 255);
+
     let contours = new cv.MatVector;
     let hierarchy = new cv.Mat;
-    let hsv = image.clone();
-    let res = new cv.Mat;
 
-    try {
-        let low = new cv.Mat(image.rows, image.cols, image.type(), new cv.Scalar(180, 180, 180));
-        let high = new cv.Mat(image.rows, image.cols, image.type(), new cv.Scalar(255, 255, 255));
-        try {
-            cv.inRange(image, low, high, white);
-            config.log("pp", "Applied white mask");
-        } finally {
-            low.delete();
-            high.delete();
-        }
+    config.log("pp", "Applying edge detection to white mask");
 
-        cv.bitwise_not(gray, gray);
+    cv.findContours(white, contours, hierarchy, cv.RETR_LIST, cv.CHAIN_APPROX_NONE);
 
-        cv.cvtColor(image, gray, cv.COLOR_BGR2GRAY, 0);
+    let cornerAnchor = null;
+    let cornerPoint = null;
 
-        cv.GaussianBlur(gray, gray, new cv.Size(9, 9), 2, 2);
+    console.log(contours.size());
+    for (let i = 0; i < contours.size(); ++i) {
+        let contour = contours.get(i);
+        let approx = new cv.Mat;
+        cv.approxPolyDP(contour, approx, 0.07 * cv.arcLength(contour, true), true);
 
-        config.displayStep(white);
+        if (approx.rows === 3) {
+            const area = cv.contourArea(contour);
 
-        let houghWhite = white.clone();
-        try {
-            cv.blur(houghWhite, houghWhite, new cv.Size(9, 9));
-            // cv.GaussianBlur(houghWhite, houghWhite, new cv.Size(9, 9), 2, 2);
-            cv.HoughCircles(houghWhite, circles, cv.HOUGH_GRADIENT, 1, houghWhite.rows / 8, 100, 50, 0, 0);
+            // Definitely too small
+            if (area <= util.config.anchorSize * util.config.anchorSize / 2 * 0.9) continue;
 
-            config.log("pp", "Applied Hough transform");
+            cornerAnchor = contour;
+            let inVector = new cv.MatVector;
+            inVector.push_back(contour);
+            cv.drawContours(copy, inVector, 0, new cv.Scalar(255, 0, 0), 2);
+            inVector.delete();
 
-            config.displayStep(houghWhite);
-        } finally {
-            houghWhite.delete();
-        }
-
-        // Find the central anchor
-        let bestCircle = null;
-        let bestDist2 = Infinity;
-
-        for (let i = 0; i < circles.cols; ++i) {
-            const x = circles.data32F[i * 3];
-            const y = circles.data32F[i * 3 + 1];
-            const radius = circles.data32F[i * 3 + 2];
-
-            const xDiff = x - image.cols / 2;
-            const yDiff = y - image.rows / 2;
-
-            const centerDist2 = xDiff * xDiff + yDiff * yDiff;
-            if (centerDist2 < bestDist2) {
-                bestDist2 = centerDist2;
-                bestCircle = {
-                    x: x,
-                    y: y,
-                    radius: radius + 1
-                };
+            // Check corner
+            let points = [];
+            for (let c = 0; c < approx.rows; ++c) {
+                let point = approx.row(c);
+                const ptr = point.intPtr(0, 0);
+                points.push(new cv.Point(ptr[0], ptr[1]));
+                console.log(`point: (${ptr[0]}, ${ptr[1]})`);
             }
+
+            cornerPoint = getCorner(points);
+            break;
         }
 
-        if (bestCircle === null) {
-            config.log("pp", "No central anchor point found");
-            return null;
-        }
-        config.log("pp", "Central anchor point located");
-
-        cv.circle(copy, new cv.Point(bestCircle.x, bestCircle.y), bestCircle.radius, new cv.Scalar(255, 0, 0), 2);
-
-        config.displayStep(copy);
-
-        cv.GaussianBlur(white, white, new cv.Size(5, 5), 0);
-        // cv.adaptiveThreshold(white, white, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 11, 2);
-        cv.Canny(white, white, 80, 255);
-
-        config.log("pp", "Applying edge detection to white mask");
-
-        cv.findContours(white, contours, hierarchy, cv.RETR_LIST, cv.CHAIN_APPROX_NONE);
-
-        let cornerPoint = null;
-
-        console.log(contours.size());
-        for (let i = 0; i < contours.size(); ++i) {
-            let contour = contours.get(i);
-            let approx = new cv.Mat;
-
-            try {
-                cv.approxPolyDP(contour, approx, 0.07 * cv.arcLength(contour, true), true);
-
-                if (approx.rows === 3) {
-                    const area = cv.contourArea(contour);
-
-                    // Definitely too small
-                    if (area <= util.config.anchorSize * util.config.anchorSize / 2 * 0.9) continue;
-
-                    let inVector = new cv.MatVector;
-                    try {
-                        inVector.push_back(contour);
-                        cv.drawContours(copy, inVector, 0, new cv.Scalar(255, 0, 0), 2);
-                    } finally {
-                        inVector.delete();
-                    }
-
-                    // Check corner
-                    let points = [];
-                    for (let c = 0; c < approx.rows; ++c) {
-                        let point = approx.row(c);
-                        try {
-                            const ptr = point.intPtr(0, 0);
-                            points.push(new cv.Point(ptr[0], ptr[1]));
-                            console.log(`point: (${ptr[0]}, ${ptr[1]})`);
-                        } finally {
-                            point.delete();
-                        }
-                    }
-
-                    cornerPoint = getCorner(points);
-                    break;
-                }
-            } finally {
-                contour.delete();
-                approx.delete();
-            }
-        }
-
-        if (!cornerPoint) {
-            config.log("pp", "No corner anchor found");
-            return null;
-        }
-
-        config.displayStep(copy);
-
-        const orientation = getOrientation(cornerPoint, white.size());
-
-        config.log("pp", "Corner anchor point located");
-        config.log("pp", `orientation: ${orientation} (${orientationString(orientation)})`);
-
-        let maxXy;
-        switch (orientation) {
-            case 0:
-                maxXy = (cornerPoint.x + cornerPoint.y) / 2;
-                break;
-            case 1:
-                maxXy = ((image.cols - cornerPoint.x) + cornerPoint.y) / 2;
-                util.rotate270(image, image);
-                break;
-            case 2:
-                maxXy = ((image.cols - cornerPoint.x) + (image.rows - cornerPoint.y)) / 2;
-                util.rotate180(image, image);
-                break;
-            case 3:
-                maxXy = (cornerPoint.x + (image.rows - cornerPoint.y)) / 2;
-                util.rotate90(image, image);
-                break;
-        }
-
-        config.log("pp", `maxXy = ${maxXy}`);
-
-        // Remove white areas
-        cv.cvtColor(hsv, hsv, cv.COLOR_BGR2HSV);
-
-        low = new cv.Mat(hsv.rows, hsv.cols, hsv.type(), new cv.Scalar(0, 0, 0));
-        high = new cv.Mat(hsv.rows, hsv.cols, hsv.type(), new cv.Scalar(0, 0, 255));
-        let mask = new cv.Mat;
-        try {
-            cv.inRange(hsv, low, high, mask);
-            cv.bitwise_not(mask, mask);
-            cv.bitwise_and(image, image, res, mask);
-            config.log("pp", "Applied inverse white mask");
-        } finally {
-            low.delete();
-            high.delete();
-            mask.delete();
-        }
-
-        config.displayStep(res);
-
-        return process0(reader, res, bestCircle, maxXy, config);
-    } finally {
-        gray.delete();
-        copy.delete();
-        circles.delete();
-        white.delete();
-        contours.delete();
-        hierarchy.delete();
-        hsv.delete();
-        res.delete();
+        approx.delete();
     }
+
+    if (cornerAnchor === null || !cornerPoint) {
+        config.log("pp", "No corner anchor found");
+        return null;
+    }
+
+    config.displayStep(copy);
+
+    const orientation = getOrientation(cornerPoint, white.size());
+
+    config.log("pp", "Corner anchor point located");
+    config.log("pp", `orientation: ${orientation} (${orientationString(orientation)})`);
+
+    let maxXy;
+    switch (orientation) {
+        case 0:
+            maxXy = (cornerPoint.x + cornerPoint.y) / 2;
+            break;
+        case 1:
+            maxXy = ((image.cols - cornerPoint.x) + cornerPoint.y) / 2;
+            util.rotate270(image, image);
+            break;
+        case 2:
+            maxXy = ((image.cols - cornerPoint.x) + (image.rows - cornerPoint.y)) / 2;
+            util.rotate180(image, image);
+            break;
+        case 3:
+            maxXy = (cornerPoint.x + (image.rows - cornerPoint.y)) / 2;
+            util.rotate90(image, image);
+            break;
+    }
+
+    config.log("pp", `maxXy = ${maxXy}`);
+
+    // Remove white areas
+    hsv = image.clone();
+    cv.cvtColor(hsv, hsv, cv.COLOR_BGR2HSV);
+
+    low = new cv.Mat(hsv.rows, hsv.cols, hsv.type(), new cv.Scalar(0, 0, 0));
+    high = new cv.Mat(hsv.rows, hsv.cols, hsv.type(), new cv.Scalar(0, 0, 255));
+
+    let mask = new cv.Mat;
+    cv.inRange(hsv, low, high, mask);
+
+    let res = new cv.Mat;
+    cv.bitwise_not(mask, mask);
+    cv.bitwise_and(image, image, res, mask);
+
+    config.log("pp", "Applied inverse white mask");
+
+    low.delete();
+    high.delete();
+
+    hierarchy.delete();
+    contours.delete();
+
+    config.displayStep(res);
+
+    mask.delete();
+
+    gray.delete();
+    copy.delete();
+    circles.delete();
+    white.delete();
+    hsv.delete();
+
+    const result = process0(reader, res, bestCircle, maxXy, config);
+
+    res.delete();
+
+    return result;
 }
 
 function orientationString(orientation) {
