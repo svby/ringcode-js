@@ -1,8 +1,8 @@
-import process0 from "./process0.js";
+import process0 from "./processors/process0.js";
 import * as util from "../util.js";
 
-export default function preprocessSquare(image, log, display) {
-    log();
+export default function preprocessSquare(reader, image, config) {
+    config.log();
 
     let gray;
     let copy;
@@ -22,7 +22,7 @@ export default function preprocessSquare(image, log, display) {
 
     cv.inRange(image, low, high, white);
 
-    log("pp", "Applied white mask");
+    config.log("pp", "Applied white mask");
 
     low.delete();
     high.delete();
@@ -35,7 +35,7 @@ export default function preprocessSquare(image, log, display) {
 
     circles = new cv.Mat;
 
-    display(white);
+    config.displayStep(white);
 
     let houghWhite = white.clone();
 
@@ -43,9 +43,9 @@ export default function preprocessSquare(image, log, display) {
     // cv.GaussianBlur(houghWhite, houghWhite, new cv.Size(9, 9), 2, 2);
     cv.HoughCircles(houghWhite, circles, cv.HOUGH_GRADIENT, 1, houghWhite.rows / 8, 100, 50, 0, 0);
 
-    log("pp", "Applied Hough transform");
+    config.log("pp", "Applied Hough transform");
 
-    display(houghWhite);
+    config.displayStep(houghWhite);
 
     houghWhite.delete();
 
@@ -54,7 +54,6 @@ export default function preprocessSquare(image, log, display) {
     let bestDist2 = Infinity;
 
     for (let i = 0; i < circles.cols; ++i) {
-        const circle = circles[i];
         const x = circles.data32F[i * 3];
         const y = circles.data32F[i * 3 + 1];
         const radius = circles.data32F[i * 3 + 2];
@@ -74,16 +73,15 @@ export default function preprocessSquare(image, log, display) {
     }
 
     if (bestCircle === null) {
-        log("pp", "No central anchor point found");
+        config.log("pp", "No central anchor point found");
         return null;
     }
-    log("pp", "Central anchor point located");
+    config.log("pp", "Central anchor point located");
 
     cv.circle(copy, new cv.Point(bestCircle.x, bestCircle.y), bestCircle.radius, new cv.Scalar(255, 0, 0), 2);
 
-    display(copy);
+    config.displayStep(copy);
 
-    // TODO find the corner anchor
     cv.GaussianBlur(white, white, new cv.Size(5, 5), 0);
     // cv.adaptiveThreshold(white, white, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 11, 2);
     cv.Canny(white, white, 80, 255);
@@ -91,7 +89,7 @@ export default function preprocessSquare(image, log, display) {
     let contours = new cv.MatVector;
     let hierarchy = new cv.Mat;
 
-    log("pp", "Applying edge detection to white mask");
+    config.log("pp", "Applying edge detection to white mask");
 
     cv.findContours(white, contours, hierarchy, cv.RETR_LIST, cv.CHAIN_APPROX_NONE);
 
@@ -116,8 +114,6 @@ export default function preprocessSquare(image, log, display) {
             cv.drawContours(copy, inVector, 0, new cv.Scalar(255, 0, 0), 2);
             inVector.delete();
 
-            console.log(`approx ${approx.size()}`);
-            console.log(approx.size());
             // Check corner
             let points = [];
             for (let c = 0; c < approx.rows; ++c) {
@@ -135,16 +131,16 @@ export default function preprocessSquare(image, log, display) {
     }
 
     if (cornerAnchor === null || !cornerPoint) {
-        log("pp", "No corner anchor found");
+        config.log("pp", "No corner anchor found");
         return null;
     }
 
-    display(copy);
+    config.displayStep(copy);
 
     const orientation = getOrientation(cornerPoint, white.size());
 
-    log("pp", "Corner anchor point located");
-    log("pp", `orientation: ${orientation} (${orientationString(orientation)})`);
+    config.log("pp", "Corner anchor point located");
+    config.log("pp", `orientation: ${orientation} (${orientationString(orientation)})`);
 
     let maxXy;
     switch (orientation) {
@@ -165,7 +161,7 @@ export default function preprocessSquare(image, log, display) {
             break;
     }
 
-    log("pp", `maxXy = ${maxXy}`);
+    config.log("pp", `maxXy = ${maxXy}`);
 
     // Remove white areas
     hsv = image.clone();
@@ -181,7 +177,7 @@ export default function preprocessSquare(image, log, display) {
     cv.bitwise_not(mask, mask);
     cv.bitwise_and(image, image, res, mask);
 
-    log("pp", "Applied inverse white mask");
+    config.log("pp", "Applied inverse white mask");
 
     low.delete();
     high.delete();
@@ -189,7 +185,7 @@ export default function preprocessSquare(image, log, display) {
     hierarchy.delete();
     contours.delete();
 
-    display(res);
+    config.displayStep(res);
 
     mask.delete();
 
@@ -199,7 +195,7 @@ export default function preprocessSquare(image, log, display) {
     white.delete();
     hsv.delete();
 
-    const result = process0(res, bestCircle, maxXy, log, display);
+    const result = process0(reader, res, bestCircle, maxXy, config);
 
     res.delete();
 

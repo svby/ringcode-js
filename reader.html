@@ -11,9 +11,6 @@
     <script defer src="https://use.fontawesome.com/releases/v5.1.0/js/all.js"></script>
     <link rel="stylesheet" href="style/main.css">
     <link rel="stylesheet" href="style/github-corners.css"/>
-    <script type="module" src="script/read/process0.js"></script>
-    <script type="module" src="script/read/preprocessSquare.js"></script>
-    <script type="module" src="script/read/detectSquare.js"></script>
 </head>
 <body>
 <div class="footer-flex">
@@ -55,11 +52,11 @@
                         <div class="field is-fullwidth">
                             <div class="control">
                                 <label class="label" for="upload">Image</label>
-                                <div class="file has-name">
+                                <div class="file has-name is-fullwidth">
                                     <label class="file-label">
                                         <input class="file-input" type="file" accept="image/png, image/jpeg"
                                                name="image"
-                                               id="upload">
+                                               id="upload" disabled>
                                         <span class="file-cta">
                                         <span class="file-icon">
                                             <i class="fas fa-upload"></i>
@@ -75,9 +72,10 @@
                             <label class="label" for="log">Log</label>
                             <textarea class="textarea is-normal" id="log" readonly></textarea>
                         </div>
-                        <p>
+                        <p id="note">
                             <b>Note:</b> The reader is currently a work in progress and may not work correctly 100% of
-                            the time.
+                            the time.<br/>
+                            <b>Perspective warping of tags (i.e. processing from a photo) is experimental.</b>
                         </p>
                     </div>
                 </div>

@@ -1,6 +1,11 @@
 import detectSquare from "./detectSquare.js";
 import Utf8Adapter from "../adapter/utf8Adapter.js";
 import * as util from '../util.js';
+import CmyReader from "./readers/cmyReader.js";
+
+const readers = Object.freeze({
+    "cmy": new CmyReader()
+});
 
 function process(source) {
     display(source);
@@ -20,7 +25,12 @@ function process(source) {
 
     display(bgr);
 
-    const res = detectSquare(bgr, log, util.config.showSteps ? display : () => {
+    const res = detectSquare(readers["cmy"], bgr, {
+        steps: util.config.showSteps,
+        display: display,
+        displayStep: util.config.showSteps ? display : () => {
+        },
+        log: log
     });
 
     log();
@@ -44,7 +54,7 @@ function process(source) {
 function log(tag, message) {
     const log = document.getElementById("log");
     if (log.value) log.value += "\n";
-    log.value += typeof message === "undefined" ? message || "" : `${tag}: ${message}`;
+    log.value += typeof message === "undefined" ? tag || "" : `${tag}: ${message}`;
     log.scrollTop = log.scrollHeight;
 }
 
@@ -120,7 +130,10 @@ function begin() {
 }
 
 function init() {
+    log("cv", "Loaded");
+
     const uploader = document.getElementById("upload");
+    uploader.disabled = false;
     uploader.addEventListener("change", begin);
 }
 
