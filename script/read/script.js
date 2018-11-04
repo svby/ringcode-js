@@ -125,7 +125,10 @@ function begin() {
 }
 
 function init() {
+    log("cv", "Loaded");
+
     const uploader = document.getElementById("upload");
+    uploader.disabled = false;
     uploader.addEventListener("change", begin);
 }
 
