@@ -1,5 +1,6 @@
 import detectSquare from "./detectSquare.js";
 import Utf8Adapter from "../adapter/utf8Adapter.js";
+import * as util from '../util.js';
 
 function process(source) {
     display(source);
@@ -10,7 +11,11 @@ function process(source) {
 
     let bgr = new cv.Mat;
     cv.cvtColor(image, bgr, cv.COLOR_BGRA2BGR);
-    const res = detectSquare(bgr, display);
+
+    display(bgr);
+
+    const res = detectSquare(bgr, util.config.showSteps ? display : () => {
+    });
     console.log(res);
 
     const data = document.getElementById("data");

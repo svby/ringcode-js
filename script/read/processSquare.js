@@ -1,8 +1,4 @@
-function sleepFor(sleepDuration) {
-    var now = new Date().getTime();
-    while (new Date().getTime() < now + sleepDuration) { /* do nothing */
-    }
-}
+// TODO delete this
 
 export default function processSquare(image, display) {
     let copy;
@@ -18,10 +14,7 @@ export default function processSquare(image, display) {
     cv.dilate(copy, copy, kernel, new cv.Point(-1, -1), 1, cv.BORDER_CONSTANT);
     kernel.delete();
 
-    // display(copy);
     cv.Canny(copy, copy, 0, 255);
-
-    //display(copy);
 
     let contours = new cv.MatVector;
     let hierarchy = new cv.Mat;
@@ -41,14 +34,6 @@ export default function processSquare(image, display) {
 
     contours.delete();
     hierarchy.delete();
-    //
-    // let contours = new cv.MatVector;
-    // let hierarchy = new cv.Mat;
-    //
-    // contourImage = image.clone();
-    // cv.cvtColor(contourImage, contourImage, cv.COLOR_BGRA2BGR);
-    //
-    // cv.findContours(gray, contours, hierarchy, cv.RETR_CCOMP, cv.CHAIN_APPROX_NONE);
 
     copy.delete();
     contourImage.delete();

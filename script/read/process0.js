@@ -1,9 +1,30 @@
 import * as util from "../util.js";
 import Utf8Adapter from "../adapter/utf8Adapter.js";
 
-function colorAt(mat, x, y) {
+function color0At(mat, x, y) {
     const ptr = mat.ucharPtr(y, x);
-    return [ptr[0], ptr[1], ptr[2]];
+    return ptr[0];
+}
+
+function color1At(mat, x, y) {
+    const ptr = mat.ucharPtr(y, x);
+    return ptr[1];
+}
+
+function color2At(mat, x, y) {
+    const ptr = mat.ucharPtr(y, x);
+    return ptr[2];
+}
+
+function colorAt(mat, x, y) {
+    return [color0At(mat, x, y), color1At(mat, x, y), color2At(mat, x, y)];
+}
+
+function avgColor(mat, x, y) {
+    const sum0 = color0At(mat, x, y) + color0At(mat, x + 1, y) + color0At(mat, x - 1, y) + color0At(mat, x, y + 1) + color0At(mat, x, y - 1);
+    const sum1 = color1At(mat, x, y) + color1At(mat, x + 1, y) + color1At(mat, x - 1, y) + color1At(mat, x, y + 1) + color1At(mat, x, y - 1);
+    const sum2 = color2At(mat, x, y) + color2At(mat, x + 1, y) + color2At(mat, x - 1, y) + color2At(mat, x, y + 1) + color2At(mat, x, y - 1);
+    return [sum0 / 5, sum1 / 5, sum2 / 5];
 }
 
 function colorDistance(h1, s1, v1, h2, s2, v2) {
@@ -33,8 +54,6 @@ function decodeTo(buf, r, g, b) {
 }
 
 export default function process0(img, centerAnchor, display) {
-    console.log(colorAt(img, centerAnchor.x, centerAnchor.y - 40));
-
     let buffer = [];
 
     let copy = img.clone();
@@ -56,7 +75,7 @@ export default function process0(img, centerAnchor, display) {
             const x = Math.round(Math.sin(angle) * radius);
             const y = Math.round(Math.cos(angle) * radius);
 
-            const color = colorAt(copy, centerAnchor.x + x, centerAnchor.y - y);
+            const color = avgColor(copy, centerAnchor.x + x, centerAnchor.y - y);
             // console.log(`value at segment ${segment} (${x}, ${y}) is ${color}`);
 
             cv.circle(copy, new cv.Point(centerAnchor.x + x, centerAnchor.y - y), 2, new cv.Scalar(255, 0, 0));
