@@ -1,5 +1,6 @@
 import processSquare from "./processSquare.js";
 import process0 from "./process0.js";
+import * as util from "../util.js";
 
 export default function preprocessSquare(image, display) {
     let gray;
@@ -80,10 +81,12 @@ export default function preprocessSquare(image, display) {
     let contours = new cv.MatVector;
     let hierarchy = new cv.Mat;
 
-    cv.findContours(white, contours, hierarchy, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE);
+    cv.findContours(white, contours, hierarchy, cv.RETR_LIST, cv.CHAIN_APPROX_NONE);
 
     let cornerAnchor = null;
+    let orientation = null;
 
+    console.log(contours.size());
     for (let i = 0; i < contours.size(); ++i) {
         let contour = contours.get(i);
         let approx = new cv.Mat;
@@ -96,13 +99,38 @@ export default function preprocessSquare(image, display) {
             inVector.push_back(contour);
             cv.drawContours(copy, inVector, 0, new cv.Scalar(255, 0, 0), 2);
             inVector.delete();
+
+            console.log(`approx ${approx.size()}`);
+            console.log(approx.size());
+            // Check corner
+            let points = [];
+            for (let c = 0; c < approx.rows; ++c) {
+                let point = approx.row(c);
+                const ptr = point.intPtr(0, 0);
+                points.push(new cv.Point(ptr[0], ptr[1]));
+                console.log(`point: (${ptr[0]}, ${ptr[1]})`);
+            }
+
+            orientation = getOrientation(points, image.size());
             break;
         }
 
         approx.delete();
     }
 
-    // TODO fix orientation
+    switch (orientation) {
+        case 0:
+            break;
+        case 1:
+            util.rotate270(image, image);
+            break;
+        case 2:
+            util.rotate180(image, image);
+            break;
+        case 3:
+            util.rotate90(image, image);
+            break;
+    }
 
     // Remove white areas
     hsv = image.clone();
@@ -139,4 +167,40 @@ export default function preprocessSquare(image, display) {
     res.delete();
 
     return result;
+}
+
+/*
+0 -> top left
+1 -> top right
+2 -> bottom right
+3 -> bottom left
+ */
+function getOrientation(triangle, dim) {
+    let last2 = triangle[1];
+    let last1 = triangle[2];
+    for (let i = 0; i < triangle.length; ++i) {
+        let current = triangle[i];
+
+        let vec1 = new cv.Point(last1.x - last2.x, last1.y - last2.y);
+        let vec2 = new cv.Point(current.x - last1.x, current.y - last1.y);
+
+        const top = vec1.x * vec2.x + vec1.y * vec2.y;
+        const bottom = Math.sqrt(vec1.x * vec1.x + vec1.y * vec1.y) * Math.sqrt(vec2.x * vec2.x + vec2.y * vec2.y);
+
+        const angle = Math.acos(top / bottom);
+        if (angle >= 4 / 9 * Math.PI && angle <= 5 / 9 * Math.PI) {
+            const left = last1.x < dim.width / 2;
+            const top = last1.y < dim.height / 2;
+
+            if (top) {
+                if (left) return 0;
+                return 1;
+            }
+            if (left) return 3;
+            return 2;
+        }
+
+        last2 = last1;
+        last1 = current;
+    }
 }

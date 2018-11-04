@@ -57,14 +57,12 @@ export default function process0(img, centerAnchor, display) {
     let buffer = [];
 
     let copy = img.clone();
-    console.log(copy.type());
 
     const scale = (centerAnchor.radius) / util.arcRadius(0);
-    console.log(scale);
+    console.log(`Tag scale: ${scale}`);
 
     for (let layer = 1; layer <= 8; ++layer) {
         const radius = util.arcRadius(layer) * scale;
-        console.log(radius);
         const segments = util.segments(layer);
 
         const segmentDelta = 2 * Math.PI / segments;
