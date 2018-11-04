@@ -4,8 +4,24 @@ export let config = {
     arcWidth: 25,
     startAngle: 3 / 2 * Math.PI,
     anchorOffset: 50,
-    anchorSize: 100
+    anchorSize: 100,
+
+    showSteps: true
 };
+
+export function rotate90(src, dest) {
+    cv.transpose(src, dest);
+    cv.flip(src, dest, 1);
+}
+
+export function rotate180(src, dest) {
+    cv.flip(src, dest, -1);
+}
+
+export function rotate270(src, dest) {
+    cv.transpose(src, dest);
+    cv.flip(src, dest, 0);
+}
 
 export function arcRadius(layer) {
     return layer === 0 ? (config.arcWidth) : (config.arcDepth * layer + config.arcWidth / 2);
