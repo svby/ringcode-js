@@ -115,8 +115,6 @@ export default function preprocessSquare(reader, image, log, display) {
             cv.drawContours(copy, inVector, 0, new cv.Scalar(255, 0, 0), 2);
             inVector.delete();
 
-            console.log(`approx ${approx.size()}`);
-            console.log(approx.size());
             // Check corner
             let points = [];
             for (let c = 0; c < approx.rows; ++c) {
