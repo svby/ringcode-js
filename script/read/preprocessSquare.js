@@ -1,8 +1,9 @@
-import processSquare from "./processSquare.js";
 import process0 from "./process0.js";
 import * as util from "../util.js";
 
 export default function preprocessSquare(image, log, display) {
+    log();
+
     let gray;
     let copy;
     let circles;
@@ -20,6 +21,8 @@ export default function preprocessSquare(image, log, display) {
     high = new cv.Mat(image.rows, image.cols, image.type(), new cv.Scalar(255, 255, 255));
 
     cv.inRange(image, low, high, white);
+
+    log("pp", "Applied white mask");
 
     low.delete();
     high.delete();
@@ -39,6 +42,8 @@ export default function preprocessSquare(image, log, display) {
     cv.blur(houghWhite, houghWhite, new cv.Size(9, 9));
     // cv.GaussianBlur(houghWhite, houghWhite, new cv.Size(9, 9), 2, 2);
     cv.HoughCircles(houghWhite, circles, cv.HOUGH_GRADIENT, 1, houghWhite.rows / 8, 100, 50, 0, 0);
+
+    log("pp", "Applied Hough transform");
 
     display(houghWhite);
 
@@ -68,7 +73,12 @@ export default function preprocessSquare(image, log, display) {
         }
     }
 
-    // TODO handle no circle
+    if (bestCircle === null) {
+        log("pp", "No central anchor point found");
+        return null;
+    }
+    log("pp", "Central anchor point located");
+
     cv.circle(copy, new cv.Point(bestCircle.x, bestCircle.y), bestCircle.radius, new cv.Scalar(255, 0, 0), 2);
 
     display(copy);
@@ -80,6 +90,8 @@ export default function preprocessSquare(image, log, display) {
 
     let contours = new cv.MatVector;
     let hierarchy = new cv.Mat;
+
+    log("pp", "Applying edge detection to white mask");
 
     cv.findContours(white, contours, hierarchy, cv.RETR_LIST, cv.CHAIN_APPROX_NONE);
 
@@ -118,6 +130,13 @@ export default function preprocessSquare(image, log, display) {
         approx.delete();
     }
 
+    if (cornerAnchor === null) {
+        log("pp", "No corner anchor found");
+        return null;
+    }
+    log("pp", "Corner anchor point located");
+    log("pp", `orientation: ${orientation} (${orientationString(orientation)})`);
+
     switch (orientation) {
         case 0:
             break;
@@ -146,6 +165,8 @@ export default function preprocessSquare(image, log, display) {
     cv.bitwise_not(mask, mask);
     cv.bitwise_and(image, image, res, mask);
 
+    log("pp", "Applied inverse white mask");
+
     low.delete();
     high.delete();
 
@@ -167,6 +188,19 @@ export default function preprocessSquare(image, log, display) {
     res.delete();
 
     return result;
+}
+
+function orientationString(orientation) {
+    switch (orientation) {
+        case 0:
+            return "TOPLEFT";
+        case 1:
+            return "TOPRIGHT";
+        case 2:
+            return "BOTTOMRIGHT";
+        case 3:
+            return "BOTTOMLEFT";
+    }
 }
 
 /*

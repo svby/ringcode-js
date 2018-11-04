@@ -50,16 +50,18 @@ function decodeTo(buf, r, g, b) {
         buf.push(0);
         buf.push(0);
     }
-    // const distCyan = colorDistance(h, s, v, 90, 255, 255);
 }
 
 export default function process0(img, centerAnchor, log, display) {
+    log();
+    log("p0", "Using ring processor process0");
+
     let buffer = [];
 
     let copy = img.clone();
 
     const scale = (centerAnchor.radius) / util.arcRadius(0);
-    console.log(`Tag scale: ${scale}`);
+    log("p0", `Tag scale: ${scale}`);
 
     for (let layer = 1; layer <= 8; ++layer) {
         const radius = util.arcRadius(layer) * scale;
@@ -82,6 +84,8 @@ export default function process0(img, centerAnchor, log, display) {
         }
     }
 
+    log("p0", "Tag decoded to bit buffer");
+
     display(copy);
 
     while (buffer.length !== 0 && buffer[buffer.length - 1] === 0) buffer.pop();
@@ -94,6 +98,9 @@ export default function process0(img, centerAnchor, log, display) {
             bits[bits.length - 1 - Math.floor(i / 8)] |= (1 << i % 8);
         }
     }
+
+    log("p0", "Tag decoded to byte buffer");
+    log("p0", "Done");
 
     return bits;
 }

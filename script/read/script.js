@@ -9,25 +9,40 @@ function process(source) {
 
     image = cv.imread(source);
 
+    log();
+
+    log("read", "Loaded image");
+
     let bgr = new cv.Mat;
     cv.cvtColor(image, bgr, cv.COLOR_BGRA2BGR);
+
+    log("read", "Converted image to BGR color space");
 
     display(bgr);
 
     const res = detectSquare(bgr, log, util.config.showSteps ? display : () => {
     });
-    console.log(res);
 
-    const data = document.getElementById("data");
-    data.value = new Utf8Adapter().decode(res);
+    log();
+
+    log("read", `result: ${res}`);
+
+    if (res === null) {
+        log("read", "Aborted");
+    } else {
+        const data = document.getElementById("data");
+        data.value = new Utf8Adapter().decode(res);
+    }
+
+    log("read", "Done");
 
     image.delete();
 }
 
-function log(message) {
+function log(tag, message) {
     const log = document.getElementById("log");
     if (log.value) log.value += "\n";
-    log.value += message;
+    log.value += typeof message === "undefined" ? message || "" : `${tag}: ${message}`;
     log.scrollTop = log.scrollHeight;
 }
 
@@ -81,11 +96,16 @@ function loadImage(data, callback) {
     image.src = data;
 }
 
-function setImage() {
+function begin() {
+    document.getElementById("log").value = "";
+
+    log("config", `Draw steps: ${util.config.showSteps}`);
+
     const uploader = document.getElementById("upload");
     const fileName = document.getElementById("upload-name");
 
     const file = uploader.files[0];
+    log("read", `Loading image ${file.name}`);
 
     fileName.innerHTML = file.name;
 
@@ -99,11 +119,10 @@ function setImage() {
 
 function init() {
     const uploader = document.getElementById("upload");
-    uploader.addEventListener("change", setImage);
+    uploader.addEventListener("change", begin);
 }
 
-document.getElementById("data").value = null;
-document.getElementById("log").value = null;
+document.getElementById("data").value = document.getElementById("log").value = "";
 
 const cvScript = document.getElementById("cv");
 cvScript.addEventListener("load", () => {
