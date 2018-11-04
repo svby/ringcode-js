@@ -25,7 +25,12 @@ function process(source) {
 
     display(bgr);
 
-    const res = detectSquare(readers["cmy"], bgr, log, util.config.showSteps ? display : () => {
+    const res = detectSquare(readers["cmy"], bgr, {
+        steps: util.config.showSteps,
+        display: display,
+        displayStep: util.config.showSteps ? display : () => {
+        },
+        log: log
     });
 
     log();

@@ -6,7 +6,7 @@ export let config = {
     anchorOffset: 50,
     anchorSize: 100,
 
-    showSteps: true
+    showSteps: false
 };
 
 export function rgb2hsv(r, g, b) {

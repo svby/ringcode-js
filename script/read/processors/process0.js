@@ -34,17 +34,17 @@ function colorDistance(h1, s1, v1, h2, s2, v2) {
     return Math.min(number, 180 - number);
 }
 
-export default function process0(reader, image, centerAnchor, cornerAnchor, log, display) {
-    log();
-    log("p0", "Using ring processor process0");
-    log("p0", `Using reader ${reader.name}`);
+export default function process0(reader, image, centerAnchor, cornerAnchor, config) {
+    config.log();
+    config.log("p0", "Using ring processor process0");
+    config.log("p0", `Using reader ${reader.name}`);
 
     let buffer = [];
 
     let copy = image.clone();
 
     const scale = (centerAnchor.radius) / util.arcRadius(0);
-    log("p0", `Tag scale: ${scale}`);
+    config.log("p0", `Tag scale: ${scale}`);
 
     for (let layer = 1; layer <= 200; ++layer) {
         const radius = util.arcRadius(layer) * scale;
@@ -69,9 +69,9 @@ export default function process0(reader, image, centerAnchor, cornerAnchor, log,
         }
     }
 
-    log("p0", "Tag decoded to bit buffer");
+    config.log("p0", "Tag decoded to bit buffer");
 
-    display(copy);
+    config.displayStep(copy);
 
     while (buffer.length !== 0 && buffer[buffer.length - 1] === 0) buffer.pop();
     buffer.reverse();
@@ -84,8 +84,8 @@ export default function process0(reader, image, centerAnchor, cornerAnchor, log,
         }
     }
 
-    log("p0", "Tag decoded to byte buffer");
-    log("p0", "Done");
+    config.log("p0", "Tag decoded to byte buffer");
+    config.log("p0", "Done");
 
     return bits;
 }
