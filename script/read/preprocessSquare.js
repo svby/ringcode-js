@@ -96,7 +96,7 @@ export default function preprocessSquare(image, log, display) {
     cv.findContours(white, contours, hierarchy, cv.RETR_LIST, cv.CHAIN_APPROX_NONE);
 
     let cornerAnchor = null;
-    let orientation = null;
+    let cornerPoint = null;
 
     console.log(contours.size());
     for (let i = 0; i < contours.size(); ++i) {
@@ -123,33 +123,43 @@ export default function preprocessSquare(image, log, display) {
                 console.log(`point: (${ptr[0]}, ${ptr[1]})`);
             }
 
-            orientation = getOrientation(points, image.size());
+            cornerPoint = getCorner(points);
             break;
         }
 
         approx.delete();
     }
 
-    if (cornerAnchor === null) {
+    if (cornerAnchor === null || !cornerPoint) {
         log("pp", "No corner anchor found");
         return null;
     }
+
+    const orientation = getOrientation(cornerPoint, white.size());
+
     log("pp", "Corner anchor point located");
     log("pp", `orientation: ${orientation} (${orientationString(orientation)})`);
 
+    let maxXy;
     switch (orientation) {
         case 0:
+            maxXy = (cornerPoint.x + cornerPoint.y) / 2;
             break;
         case 1:
+            maxXy = ((image.cols - cornerPoint.x) + cornerPoint.y) / 2;
             util.rotate270(image, image);
             break;
         case 2:
+            maxXy = ((image.cols - cornerPoint.x) + (image.rows - cornerPoint.y)) / 2;
             util.rotate180(image, image);
             break;
         case 3:
+            maxXy = (cornerPoint.x + (image.rows - cornerPoint.y)) / 2;
             util.rotate90(image, image);
             break;
     }
+
+    log("pp", `maxXy = ${maxXy}`);
 
     // Remove white areas
     hsv = image.clone();
@@ -183,7 +193,7 @@ export default function preprocessSquare(image, log, display) {
     white.delete();
     hsv.delete();
 
-    const result = process0(res, bestCircle, log, display);
+    const result = process0(res, bestCircle, maxXy, log, display);
 
     res.delete();
 
@@ -203,13 +213,7 @@ function orientationString(orientation) {
     }
 }
 
-/*
-0 -> top left
-1 -> top right
-2 -> bottom right
-3 -> bottom left
- */
-function getOrientation(triangle, dim) {
+function getCorner(triangle) {
     let last2 = triangle[1];
     let last1 = triangle[2];
     for (let i = 0; i < triangle.length; ++i) {
@@ -222,19 +226,27 @@ function getOrientation(triangle, dim) {
         const bottom = Math.sqrt(vec1.x * vec1.x + vec1.y * vec1.y) * Math.sqrt(vec2.x * vec2.x + vec2.y * vec2.y);
 
         const angle = Math.acos(top / bottom);
-        if (angle >= 4 / 9 * Math.PI && angle <= 5 / 9 * Math.PI) {
-            const left = last1.x < dim.width / 2;
-            const top = last1.y < dim.height / 2;
-
-            if (top) {
-                if (left) return 0;
-                return 1;
-            }
-            if (left) return 3;
-            return 2;
-        }
+        if (angle >= 4 / 9 * Math.PI && angle <= 5 / 9 * Math.PI) return last1;
 
         last2 = last1;
         last1 = current;
     }
+}
+
+/*
+0 -> top left
+1 -> top right
+2 -> bottom right
+3 -> bottom left
+ */
+function getOrientation(point, dim) {
+    const left = point.x < dim.width / 2;
+    const top = point.y < dim.height / 2;
+
+    if (top) {
+        if (left) return 0;
+        return 1;
+    }
+    if (left) return 3;
+    return 2;
 }
