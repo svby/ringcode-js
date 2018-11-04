@@ -1,6 +1,6 @@
 import preprocessSquare from "./preprocessSquare.js";
 
-export default function detectSquare(img, log, display) {
+export default function detectSquare(reader, img, log, display) {
     // TODO
 
     log("read", "Detected square");
@@ -8,7 +8,7 @@ export default function detectSquare(img, log, display) {
     let copy = new cv.Mat;
     cv.resize(img, copy, new cv.Size(550, 550));
 
-    const result = preprocessSquare(copy, log, display);
+    const result = preprocessSquare(reader, copy, log, display);
 
     copy.delete();
 

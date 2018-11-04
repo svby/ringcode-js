@@ -11,6 +11,10 @@ const colors = Object.freeze([
 
 export default class CmyGenerator {
 
+    get name() {
+        return "cmy";
+    }
+
     get foregroundTextColor() {
         return "#FFFFFF";
     }

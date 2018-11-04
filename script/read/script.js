@@ -1,6 +1,11 @@
 import detectSquare from "./detectSquare.js";
 import Utf8Adapter from "../adapter/utf8Adapter.js";
 import * as util from '../util.js';
+import CmyReader from "./readers/cmyReader.js";
+
+const readers = Object.freeze({
+    "cmy": new CmyReader()
+});
 
 function process(source) {
     display(source);
@@ -20,7 +25,7 @@ function process(source) {
 
     display(bgr);
 
-    const res = detectSquare(bgr, log, util.config.showSteps ? display : () => {
+    const res = detectSquare(readers["cmy"], bgr, log, util.config.showSteps ? display : () => {
     });
 
     log();

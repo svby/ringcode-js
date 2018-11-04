@@ -1,5 +1,4 @@
-import * as util from "../util.js";
-import Utf8Adapter from "../adapter/utf8Adapter.js";
+import * as util from "../../util.js";
 
 function color0At(mat, x, y) {
     const ptr = mat.ucharPtr(y, x);
@@ -35,37 +34,21 @@ function colorDistance(h1, s1, v1, h2, s2, v2) {
     return Math.min(number, 180 - number);
 }
 
-function decodeTo(buf, r, g, b) {
-    // TODO color range
-    if (r === 255 && g === 255) {
-        buf.push(1);
-        buf.push(0);
-    } else if (r === 255 && b === 255) {
-        buf.push(0);
-        buf.push(1);
-    } else if (g === 255 && b === 255) {
-        buf.push(1);
-        buf.push(1);
-    } else if (r === 0 && g === 0 && b === 0) {
-        buf.push(0);
-        buf.push(0);
-    }
-}
-
-export default function process0(img, centerAnchor, maxXy, log, display) {
+export default function process0(reader, image, centerAnchor, cornerAnchor, log, display) {
     log();
     log("p0", "Using ring processor process0");
+    log("p0", `Using reader ${reader.name}`);
 
     let buffer = [];
 
-    let copy = img.clone();
+    let copy = image.clone();
 
     const scale = (centerAnchor.radius) / util.arcRadius(0);
     log("p0", `Tag scale: ${scale}`);
 
     for (let layer = 1; layer <= 200; ++layer) {
         const radius = util.arcRadius(layer) * scale;
-        if (centerAnchor.x - radius <= maxXy || centerAnchor.y - radius <= maxXy) {
+        if (centerAnchor.x - radius <= cornerAnchor || centerAnchor.y - radius <= cornerAnchor) {
             break;
         }
         const segments = util.segments(layer);
@@ -79,11 +62,10 @@ export default function process0(img, centerAnchor, maxXy, log, display) {
             const y = Math.round(Math.cos(angle) * radius);
 
             const color = avgColor(copy, centerAnchor.x + x, centerAnchor.y - y);
-            // console.log(`value at segment ${segment} (${x}, ${y}) is ${color}`);
 
             cv.circle(copy, new cv.Point(centerAnchor.x + x, centerAnchor.y - y), 2, new cv.Scalar(255, 0, 0));
 
-            decodeTo(buffer, color[0], color[1], color[2]);
+            reader.process(buffer, color[0], color[1], color[2]);
         }
     }
 
