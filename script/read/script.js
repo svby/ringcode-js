@@ -1,46 +1,51 @@
-const reader = new FileReader;
+import detectSquare from "./detectSquare.js";
+import Utf8Adapter from "../adapter/utf8Adapter.js";
+import * as util from '../util.js';
 
 function process(source) {
     display(source);
 
     let image;
-    let gray;
-    let contourImage;
-    let blank;
 
     image = cv.imread(source);
-    gray = cv.Mat.zeros(image.rows, image.cols, cv.CV_8U);
 
-    cv.cvtColor(image, gray, cv.COLOR_BGR2GRAY, 0);
-    // TODO blur
-    // cv.GaussianBlur();
-    cv.GaussianBlur(gray, gray, new cv.Size(3, 3), 0);
-    cv.Canny(gray, gray, 75, 255);
+    log();
 
-    let contours = new cv.MatVector;
-    let hierarchy = new cv.Mat;
+    log("read", "Loaded image");
 
-    blank = cv.Mat.zeros(image.rows, image.cols, cv.CV_8UC3);
-    contourImage = image.clone();
-    cv.cvtColor(contourImage, contourImage, cv.COLOR_BGRA2BGR);
+    let bgr = new cv.Mat;
+    cv.cvtColor(image, bgr, cv.COLOR_BGRA2BGR);
 
-    cv.findContours(gray, contours, hierarchy, cv.RETR_CCOMP, cv.CHAIN_APPROX_NONE);
+    log("read", "Converted image to BGR color space");
 
-    for (let i = 0; i < contours.size(); ++i) {
-        cv.drawContours(blank, contours, i, new cv.Scalar(Math.round(Math.random() * 255), Math.round(Math.random() * 255),
-            Math.round(Math.random() * 255), 255), 1, cv.LINE_AA, hierarchy, 100);
+    display(bgr);
+
+    const res = detectSquare(bgr, log, util.config.showSteps ? display : () => {
+    });
+
+    log();
+
+    log("read", `result: ${res}`);
+
+    if (res === null) {
+        log("read", "Aborted");
+    } else if (typeof res === "undefined") {
+        log("read", "The tag could not be scanned.")
+    } else {
+        const data = document.getElementById("data");
+        data.value = new Utf8Adapter().decode(res);
     }
 
-    // TODO process
-    contours.delete();
-    hierarchy.delete();
-
-    display(blank);
+    log("read", "Done");
 
     image.delete();
-    gray.delete();
-    contourImage.delete();
-    blank.delete();
+}
+
+function log(tag, message) {
+    const log = document.getElementById("log");
+    if (log.value) log.value += "\n";
+    log.value += typeof message === "undefined" ? message || "" : `${tag}: ${message}`;
+    log.scrollTop = log.scrollHeight;
 }
 
 function matToCanvas(mat) {
@@ -69,7 +74,7 @@ function display(source) {
 
     const width = canvas.width, height = canvas.height;
 
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, width, height);
 
     const scale = Math.min(height / image.height, width / image.width);
@@ -83,34 +88,43 @@ function display(source) {
     ctx.drawImage(image, x, y, scaledWidth, scaledHeight)
 }
 
-function loadImage(data) {
+function loadImage(data, callback) {
     const image = new Image;
 
     image.addEventListener("load", function () {
-        process(image);
+        callback(image);
     });
 
     image.src = data;
 }
 
-function setImage() {
+function begin() {
+    document.getElementById("log").value = "";
+
+    log("config", `Draw steps: ${util.config.showSteps}`);
+
     const uploader = document.getElementById("upload");
     const fileName = document.getElementById("upload-name");
 
     const file = uploader.files[0];
+    log("read", `Loading image ${file.name}`);
 
     fileName.innerHTML = file.name;
 
-    let reader = new FileReader;
-    reader.addEventListener("load", () => loadImage(reader.result));
+    let reader = new FileReader();
+    reader.addEventListener("load", () => {
+        loadImage(reader.result, (image) => process(image))
+    });
 
     if (file) reader.readAsDataURL(file);
 }
 
 function init() {
     const uploader = document.getElementById("upload");
-    uploader.addEventListener("change", setImage);
+    uploader.addEventListener("change", begin);
 }
+
+document.getElementById("data").value = document.getElementById("log").value = "";
 
 const cvScript = document.getElementById("cv");
 cvScript.addEventListener("load", () => {

@@ -2,12 +2,35 @@ html, body {
     height: 100%;
 }
 
+body {
+    min-width: 1000px;
+    width: auto !important;
+}
+
 canvas#canvas {
     border: 1px solid gray;
 }
 
 div.flex {
     display: flex;
+}
+
+div.side-flex {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+div#area-div {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+div#area-div textarea {
+    flex-grow: 1;
+    resize: none;
+    font-size: 11pt;
 }
 
 div.flex div.side {
