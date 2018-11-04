@@ -2,7 +2,7 @@ import processSquare from "./processSquare.js";
 import process0 from "./process0.js";
 import * as util from "../util.js";
 
-export default function preprocessSquare(image, display) {
+export default function preprocessSquare(image, log, display) {
     let gray;
     let copy;
     let circles;
@@ -162,7 +162,7 @@ export default function preprocessSquare(image, display) {
     white.delete();
     hsv.delete();
 
-    const result = process0(res, bestCircle, display);
+    const result = process0(res, bestCircle, log, display);
 
     res.delete();
 

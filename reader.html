@@ -40,45 +40,52 @@
                     <canvas id="canvas" width="550" height="550"></canvas>
                 </div>
                 <div class="side">
-                    <div class="field">
-                        <div class="control">
-                            <label class="label" for="method">Type</label>
-                            <div class="select">
-                                <select id="method" disabled>
-                                    <!--<option value="bw">Black</option>-->
-                                    <option value="cmy" selected>CMY</option>
-                                    <!--<option value="rgb">RGB</option>-->
-                                </select>
+                    <div class="side-flex">
+                        <div class="field">
+                            <div class="control">
+                                <label class="label" for="method">Type</label>
+                                <div class="select">
+                                    <select id="method" disabled>
+                                        <!--<option value="bw">Black</option>-->
+                                        <option value="cmy" selected>CMY</option>
+                                        <!--<option value="rgb">RGB</option>-->
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="field is-fullwidth">
-                        <div class="control">
-                            <label class="label" for="upload">Image</label>
-                            <div class="file has-name">
-                                <label class="file-label">
-                                    <input class="file-input" type="file" accept="image/png, image/jpeg" name="image"
-                                           id="upload">
-                                    <span class="file-cta">
+                        <div class="field is-fullwidth">
+                            <div class="control">
+                                <label class="label" for="upload">Image</label>
+                                <div class="file has-name">
+                                    <label class="file-label">
+                                        <input class="file-input" type="file" accept="image/png, image/jpeg"
+                                               name="image"
+                                               id="upload">
+                                        <span class="file-cta">
                                         <span class="file-icon">
                                             <i class="fas fa-upload"></i>
                                         </span>
                                         <span class="file-label">Select an image</span>
                                     </span>
-                                    <span class="file-name" id="upload-name">None</span>
-                                </label>
+                                        <span class="file-name" id="upload-name">None</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
+                        <div class="field is-fullwidth" id="area-div">
+                            <label class="label" for="log">Log</label>
+                            <textarea class="textarea is-normal" id="log" readonly></textarea>
+                        </div>
+                        <p>
+                            <b>Note:</b> The reader is currently a work in progress and may not work correctly 100% of
+                            the time.
+                        </p>
                     </div>
-                    <p>
-                        <b>Note:</b> The reader is currently a work in progress and is not yet complete.
-                    </p>
                 </div>
             </div>
             <div class="field">
                 <label class="label" for="data">Data</label>
                 <textarea class="textarea is-normal" id="data" disabled></textarea>
-                <p id="invalidData" class="help is-danger is-hidden">This value is invalid</p>
             </div>
             <!--<div class="field is-grouped">-->
             <!--<div class="control">-->

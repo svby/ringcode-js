@@ -53,7 +53,7 @@ function decodeTo(buf, r, g, b) {
     // const distCyan = colorDistance(h, s, v, 90, 255, 255);
 }
 
-export default function process0(img, centerAnchor, display) {
+export default function process0(img, centerAnchor, log, display) {
     let buffer = [];
 
     let copy = img.clone();

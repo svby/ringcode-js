@@ -14,42 +14,21 @@ function process(source) {
 
     display(bgr);
 
-    const res = detectSquare(bgr, util.config.showSteps ? display : () => {
+    const res = detectSquare(bgr, log, util.config.showSteps ? display : () => {
     });
     console.log(res);
 
     const data = document.getElementById("data");
     data.value = new Utf8Adapter().decode(res);
 
-    // gray = cv.Mat.zeros(image.rows, image.cols, cv.CV_8U);
-    //
-    // cv.cvtColor(image, gray, cv.COLOR_BGR2GRAY, 0);
-    // // TODO blur
-    // // cv.GaussianBlur();
-    // cv.GaussianBlur(gray, gray, new cv.Size(3, 3), 0);
-    // cv.Canny(gray, gray, 75, 255);
-    //
-    // let contours = new cv.MatVector;
-    // let hierarchy = new cv.Mat;
-    //
-    // blank = cv.Mat.zeros(image.rows, image.cols, cv.CV_8UC3);
-    // contourImage = image.clone();
-    // cv.cvtColor(contourImage, contourImage, cv.COLOR_BGRA2BGR);
-    //
-    // cv.findContours(gray, contours, hierarchy, cv.RETR_CCOMP, cv.CHAIN_APPROX_NONE);
-    //
-    // for (let i = 0; i < contours.size(); ++i) {
-    //     cv.drawContours(blank, contours, i, new cv.Scalar(Math.round(Math.random() * 255), Math.round(Math.random() * 255),
-    //         Math.round(Math.random() * 255), 255), 1, cv.LINE_AA, hierarchy, 100);
-    // }
-    //
-    // // TODO process
-    // contours.delete();
-    // hierarchy.delete();
-
-    // display(features);
-
     image.delete();
+}
+
+function log(message) {
+    const log = document.getElementById("log");
+    if (log.value) log.value += "\n";
+    log.value += message;
+    log.scrollTop = log.scrollHeight;
 }
 
 function matToCanvas(mat) {
@@ -122,6 +101,9 @@ function init() {
     const uploader = document.getElementById("upload");
     uploader.addEventListener("change", setImage);
 }
+
+document.getElementById("data").value = null;
+document.getElementById("log").value = null;
 
 const cvScript = document.getElementById("cv");
 cvScript.addEventListener("load", () => {
