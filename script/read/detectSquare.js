@@ -77,6 +77,7 @@ export default function detectSquare(reader, img, config) {
             const ptr = best.intPtr(i, 0);
             points.push(ptr[0], ptr[1]);
         }
+
         config.log("dt", `Quadrilateral points: ${points}`);
 
         console.log(`warp points: ${points}`);
@@ -99,7 +100,7 @@ export default function detectSquare(reader, img, config) {
 
         warped = cv.Mat.zeros(new cv.Size(550, 550), img.type());
         let source = cv.matFromArray(4, 1, cv.CV_32FC2, points);
-        let dest = cv.matFromArray(4, 1, cv.CV_32FC2, [550, 550, 550, 0, 0, 0, 0, 550]);
+        let dest = cv.matFromArray(4, 1, cv.CV_32FC2, [0, 0, 0, 550, 550, 550, 550, 0]);
 
         let M = cv.getPerspectiveTransform(source, dest);
 
