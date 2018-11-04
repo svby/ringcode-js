@@ -39,8 +39,8 @@ export default function preprocessSquare(reader, image, config) {
 
     let houghWhite = white.clone();
 
-    cv.blur(houghWhite, houghWhite, new cv.Size(9, 9));
-    // cv.GaussianBlur(houghWhite, houghWhite, new cv.Size(9, 9), 2, 2);
+    // cv.blur(houghWhite, houghWhite, new cv.Size(9, 9));
+    cv.GaussianBlur(houghWhite, houghWhite, new cv.Size(7, 7), 2, 2);
     cv.HoughCircles(houghWhite, circles, cv.HOUGH_GRADIENT, 1, houghWhite.rows / 8, 100, 50, 0, 0);
 
     config.log("pp", "Applied Hough transform");
