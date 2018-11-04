@@ -1,3 +1,5 @@
+import * as util from "../../util.js";
+
 export default class CmyReader {
 
     get name() {
@@ -5,16 +7,18 @@ export default class CmyReader {
     }
 
     process(buffer, r, g, b) {
-        if (r === 255 && g === 255) {
+        const hsv = util.rgb2hsv(r, g, b);
+
+        if (hsv.h >= 145 && hsv.h <= 155 && hsv.v >= 180) {
+            buffer.push(0);
+            buffer.push(1);
+        } else if (hsv.h >= 85 && hsv.h <= 95 && hsv.v >= 180) {
+            buffer.push(1);
+            buffer.push(1);
+        } else if (hsv.h >= 25 && hsv.h <= 35 && hsv.v >= 180) {
             buffer.push(1);
             buffer.push(0);
-        } else if (r === 255 && b === 255) {
-            buffer.push(0);
-            buffer.push(1);
-        } else if (g === 255 && b === 255) {
-            buffer.push(1);
-            buffer.push(1);
-        } else if (r === 0 && g === 0 && b === 0) {
+        } else {
             buffer.push(0);
             buffer.push(0);
         }

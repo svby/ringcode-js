@@ -9,6 +9,35 @@ export let config = {
     showSteps: true
 };
 
+export function rgb2hsv(r, g, b) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+
+    let max = Math.max(r, g, b);
+    let min = Math.min(r, g, b);
+
+    let H, S, V;
+
+    if (max === min) H = 0;
+    else if (max === r) H = ((g - b) / (max - min)) * 180 / 6;
+    else if (max === g) H = (2 + (b - r) / (max - min)) * 180 / 6;
+    else if (max === b) H = (4 + (b - r) / (max - min)) * 180 / 6;
+
+    if (H < 0) H += 180;
+
+    if (max === 0) S = 0;
+    else S = 255 * (max - min) / max;
+
+    V = 255 * max;
+
+    return {
+        h: H,
+        s: S,
+        v: V
+    };
+}
+
 export function rotate90(src, dest) {
     cv.transpose(src, dest);
     cv.flip(src, dest, 1);
