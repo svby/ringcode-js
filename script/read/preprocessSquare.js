@@ -105,7 +105,11 @@ export default function preprocessSquare(image, log, display) {
         cv.approxPolyDP(contour, approx, 0.07 * cv.arcLength(contour, true), true);
 
         if (approx.rows === 3) {
-            // TODO check if correct angle/proportions?
+            const area = cv.contourArea(contour);
+
+            // Definitely too small
+            if (area <= util.config.anchorSize * util.config.anchorSize / 2 * 0.9) continue;
+
             cornerAnchor = contour;
             let inVector = new cv.MatVector;
             inVector.push_back(contour);
@@ -134,6 +138,8 @@ export default function preprocessSquare(image, log, display) {
         log("pp", "No corner anchor found");
         return null;
     }
+
+    display(copy);
 
     const orientation = getOrientation(cornerPoint, white.size());
 
@@ -226,7 +232,7 @@ function getCorner(triangle) {
         const bottom = Math.sqrt(vec1.x * vec1.x + vec1.y * vec1.y) * Math.sqrt(vec2.x * vec2.x + vec2.y * vec2.y);
 
         const angle = Math.acos(top / bottom);
-        if (angle >= 4 / 9 * Math.PI && angle <= 5 / 9 * Math.PI) return last1;
+        if (angle >= 5 / 11 * Math.PI && angle <= 6 / 11 * Math.PI) return last1;
 
         last2 = last1;
         last1 = current;
