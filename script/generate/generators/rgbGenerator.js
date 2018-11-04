@@ -9,7 +9,11 @@ const colors = Object.freeze([
     color1, color2, color3, color4
 ]);
 
-export default class CmyGenerator {
+export default class RgbGenerator {
+
+    get name() {
+        return "rgb";
+    }
 
     get foregroundTextColor() {
         return "#FFFFFF";

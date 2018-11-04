@@ -2,6 +2,10 @@ import * as util from '../../util.js'
 
 export default class BwGenerator {
 
+    get name() {
+        return "bw";
+    }
+
     get foregroundTextColor() {
         return "#000000";
     }
