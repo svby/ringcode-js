@@ -52,7 +52,7 @@ function decodeTo(buf, r, g, b) {
     }
 }
 
-export default function process0(img, centerAnchor, log, display) {
+export default function process0(img, centerAnchor, maxXy, log, display) {
     log();
     log("p0", "Using ring processor process0");
 
@@ -63,8 +63,11 @@ export default function process0(img, centerAnchor, log, display) {
     const scale = (centerAnchor.radius) / util.arcRadius(0);
     log("p0", `Tag scale: ${scale}`);
 
-    for (let layer = 1; layer <= 8; ++layer) {
+    for (let layer = 1; layer <= 200; ++layer) {
         const radius = util.arcRadius(layer) * scale;
+        if (centerAnchor.x - radius <= maxXy || centerAnchor.y - radius <= maxXy) {
+            break;
+        }
         const segments = util.segments(layer);
 
         const segmentDelta = 2 * Math.PI / segments;
