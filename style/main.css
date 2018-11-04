@@ -30,6 +30,7 @@ div#area-div {
 div#area-div textarea {
     flex-grow: 1;
     resize: none;
+    font-size: 11pt;
 }
 
 div.flex div.side {

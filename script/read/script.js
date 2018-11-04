@@ -29,6 +29,8 @@ function process(source) {
 
     if (res === null) {
         log("read", "Aborted");
+    } else if (typeof res === "undefined") {
+        log("read", "The tag could not be scanned.")
     } else {
         const data = document.getElementById("data");
         data.value = new Utf8Adapter().decode(res);
