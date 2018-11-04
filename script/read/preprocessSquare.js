@@ -1,7 +1,7 @@
-import process0 from "./process0.js";
+import process0 from "./processors/process0.js";
 import * as util from "../util.js";
 
-export default function preprocessSquare(image, log, display) {
+export default function preprocessSquare(reader, image, log, display) {
     log();
 
     let gray;
@@ -54,7 +54,6 @@ export default function preprocessSquare(image, log, display) {
     let bestDist2 = Infinity;
 
     for (let i = 0; i < circles.cols; ++i) {
-        const circle = circles[i];
         const x = circles.data32F[i * 3];
         const y = circles.data32F[i * 3 + 1];
         const radius = circles.data32F[i * 3 + 2];
@@ -199,7 +198,7 @@ export default function preprocessSquare(image, log, display) {
     white.delete();
     hsv.delete();
 
-    const result = process0(res, bestCircle, maxXy, log, display);
+    const result = process0(reader, res, bestCircle, maxXy, log, display);
 
     res.delete();
 
