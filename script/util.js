@@ -4,7 +4,9 @@ export let config = {
     arcWidth: 25,
     startAngle: 3 / 2 * Math.PI,
     anchorOffset: 50,
-    anchorSize: 100
+    anchorSize: 100,
+
+    showSteps: true
 };
 
 export function arcRadius(layer) {
