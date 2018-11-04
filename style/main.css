@@ -27,10 +27,14 @@ div#area-div {
     flex-direction: column;
 }
 
+p#note {
+    font-size: 10pt;
+}
+
 div#area-div textarea {
     flex-grow: 1;
     resize: none;
-    font-size: 11pt;
+    font-size: 10pt;
 }
 
 div.flex div.side {

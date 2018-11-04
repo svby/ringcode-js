@@ -82,7 +82,6 @@ export default function preprocessSquare(reader, image, log, display) {
 
     display(copy);
 
-    // TODO find the corner anchor
     cv.GaussianBlur(white, white, new cv.Size(5, 5), 0);
     // cv.adaptiveThreshold(white, white, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 11, 2);
     cv.Canny(white, white, 80, 255);
