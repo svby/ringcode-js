@@ -42,6 +42,7 @@ export default function process0(reader, image, centerAnchor, cornerAnchor, conf
     let buffer = [];
 
     let copy = image.clone();
+    cv.GaussianBlur(copy, copy, new cv.Size(7, 7), 2, 2);
 
     const scale = (centerAnchor.radius) / util.arcRadius(0);
     config.log("p0", `Tag scale: ${scale}`);
