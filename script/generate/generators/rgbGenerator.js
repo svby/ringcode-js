@@ -5,14 +5,14 @@ const color2 = "#0000FF";
 const color3 = "#00FF00";
 const color4 = "#FF0000";
 
-const colors = Object.freeze([
-    color1, color2, color3, color4
-]);
-
 export default class RgbGenerator {
 
     get name() {
         return "rgb";
+    }
+
+    get colors() {
+        return [color1, color2, color3, color4];
     }
 
     get foregroundTextColor() {

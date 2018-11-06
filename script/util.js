@@ -5,6 +5,7 @@ export let config = {
     startAngle: 3 / 2 * Math.PI,
     anchorOffset: 25,
     anchorSize: 100,
+    keySize: 40,
 
     reader: {
         whiteThreshold: 100,

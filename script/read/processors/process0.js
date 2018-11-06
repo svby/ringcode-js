@@ -65,8 +65,6 @@ export default function process0(reader, image, centerAnchor, cornerAnchor, conf
 
             const color2 = avgColor(copy, centerAnchor.x + x, centerAnchor.y - y);
             const converted = util.rgb2hsv(color2[0], color2[1], color2[2]);
-            // console.log(`${layer}/${segment} ${color2[0]} ${color2[1]} ${color2[2]}`);
-            // console.log(`${layer}/${segment} ${util.hsv(converted.h, converted.s, converted.v)}`);
 
             reader.process(buffer, converted.h, converted.s, converted.v);
 

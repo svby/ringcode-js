@@ -45,6 +45,26 @@ export default function draw(bytes, generator) {
     pageCtx.fillStyle = generator.foregroundTextColor || "#000000";
     pageCtx.fill();
 
+    {
+        let idx = 0;
+        for (const color of generator.colors) {
+            if (color === "#FFFFFF" || color === "#000000") continue;
+            pageCtx.fillStyle = color;
+            switch (idx) {
+                case 0:
+                    pageCtx.fillRect(pageCanvas.width - util.config.anchorOffset - util.config.keySize, pageCanvas.height - util.config.anchorOffset - util.config.keySize, util.config.keySize, util.config.keySize);
+                    break;
+                case 1:
+                    pageCtx.fillRect(pageCanvas.width - util.config.anchorOffset - util.config.keySize, pageCanvas.height - util.config.anchorOffset - util.config.keySize - util.config.keySize, util.config.keySize, util.config.keySize);
+                    break;
+                case 2:
+                    pageCtx.fillRect(pageCanvas.width - util.config.anchorOffset - util.config.keySize - util.config.keySize, pageCanvas.height - util.config.anchorOffset - util.config.keySize, util.config.keySize, util.config.keySize);
+                    break;
+            }
+            ++idx;
+        }
+    }
+
     pageCtx.fillStyle = generator.foregroundTextColor || "#000000";
     pageCtx.fillText(size === 1 ? "1 byte" : `${size} bytes`, 5, pageCanvas.height - 5);
 }

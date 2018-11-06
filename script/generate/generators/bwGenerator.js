@@ -6,6 +6,10 @@ export default class BwGenerator {
         return "bw";
     }
 
+    get colors() {
+        return ["#000000", "#FFFFFF"];
+    }
+
     get foregroundTextColor() {
         return "#000000";
     }

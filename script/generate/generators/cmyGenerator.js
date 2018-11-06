@@ -5,14 +5,14 @@ const color2 = "#FFFF00";
 const color3 = "#FF00FF";
 const color4 = "#00FFFF";
 
-const colors = Object.freeze([
-    color1, color2, color3, color4
-]);
-
 export default class CmyGenerator {
 
     get name() {
         return "cmy";
+    }
+
+    get colors() {
+        return [color1, color2, color3, color4];
     }
 
     get foregroundTextColor() {
