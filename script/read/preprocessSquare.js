@@ -17,10 +17,12 @@ export default function preprocessSquare(reader, image, config) {
     gray = cv.Mat.zeros(image.rows, image.cols, cv.CV_8U);
 
     white = new cv.Mat;
-    low = new cv.Mat(image.rows, image.cols, image.type(), new cv.Scalar(180, 180, 180));
-    high = new cv.Mat(image.rows, image.cols, image.type(), new cv.Scalar(255, 255, 255));
+    cv.cvtColor(image, white, cv.COLOR_BGR2HSV);
 
-    cv.inRange(image, low, high, white);
+    low = new cv.Mat(image.rows, image.cols, image.type(), new cv.Scalar(0, 0, 255 - util.config.reader.whiteThreshold));
+    high = new cv.Mat(image.rows, image.cols, image.type(), new cv.Scalar(255, util.config.reader.whiteThreshold, 255));
+
+    cv.inRange(white, low, high, white);
 
     config.log("pp", "Applied white mask");
 
@@ -40,7 +42,7 @@ export default function preprocessSquare(reader, image, config) {
     let houghWhite = white.clone();
 
     // cv.blur(houghWhite, houghWhite, new cv.Size(9, 9));
-    cv.GaussianBlur(houghWhite, houghWhite, new cv.Size(7, 7), 2, 2);
+    cv.GaussianBlur(houghWhite, houghWhite, new cv.Size(7, 7), 2, 0);
     cv.HoughCircles(houghWhite, circles, cv.HOUGH_GRADIENT, 1, houghWhite.rows / 8, 100, 50, 0, 0);
 
     config.log("pp", "Applied Hough transform");
@@ -150,14 +152,29 @@ export default function preprocessSquare(reader, image, config) {
         case 1:
             maxXy = ((image.cols - cornerPoint.x) + cornerPoint.y) / 2;
             util.rotate270(image, image);
+            bestCircle = {
+                y: bestCircle.x,
+                x: image.cols - bestCircle.y,
+                radius: bestCircle.radius
+            };
             break;
         case 2:
             maxXy = ((image.cols - cornerPoint.x) + (image.rows - cornerPoint.y)) / 2;
             util.rotate180(image, image);
+            bestCircle = {
+                y: image.cols - bestCircle.y,
+                x: image.cols - bestCircle.x,
+                radius: bestCircle.radius
+            };
             break;
         case 3:
             maxXy = (cornerPoint.x + (image.rows - cornerPoint.y)) / 2;
             util.rotate90(image, image);
+            bestCircle = {
+                y: image.cols - bestCircle.x,
+                x: bestCircle.y,
+                radius: bestCircle.radius
+            };
             break;
     }
 

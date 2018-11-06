@@ -16,7 +16,8 @@ function color2At(mat, x, y) {
 }
 
 function colorAt(mat, x, y) {
-    return [color0At(mat, x, y), color1At(mat, x, y), color2At(mat, x, y)];
+    const ptr = mat.ucharPtr(y, x);
+    return [ptr[0], ptr[1], ptr[2]];
 }
 
 function avgColor(mat, x, y) {
@@ -62,11 +63,14 @@ export default function process0(reader, image, centerAnchor, cornerAnchor, conf
             const x = Math.round(Math.sin(angle) * radius);
             const y = Math.round(Math.cos(angle) * radius);
 
-            const color = avgColor(copy, centerAnchor.x + x, centerAnchor.y - y);
+            const color2 = avgColor(copy, centerAnchor.x + x, centerAnchor.y - y);
+            const converted = util.rgb2hsv(color2[0], color2[1], color2[2]);
+            // console.log(`${layer}/${segment} ${color2[0]} ${color2[1]} ${color2[2]}`);
+            // console.log(`${layer}/${segment} ${util.hsv(converted.h, converted.s, converted.v)}`);
+
+            reader.process(buffer, converted.h, converted.s, converted.v);
 
             cv.circle(copy, new cv.Point(centerAnchor.x + x, centerAnchor.y - y), 2, new cv.Scalar(255, 0, 0));
-
-            reader.process(buffer, color[0], color[1], color[2]);
         }
     }
 

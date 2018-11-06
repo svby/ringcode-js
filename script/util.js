@@ -3,11 +3,33 @@ export let config = {
     arcDepth: 30,
     arcWidth: 25,
     startAngle: 3 / 2 * Math.PI,
-    anchorOffset: 50,
+    anchorOffset: 25,
     anchorSize: 100,
+
+    reader: {
+        whiteThreshold: 100,
+        vThreshold: 120,
+        segmentBoundary: 1
+    },
 
     showSteps: false
 };
+
+export function segment(h1, h2, h3) {
+    const segment2Length = (h3 - h2) / 2 + (h2 - h1) / 2 - config.reader.segmentBoundary;
+    const segment3Length = (180 + h1 - h3) / 2 + (h2 - h1) / 2 - config.reader.segmentBoundary;
+    const segment1Length = 180 - segment2Length - segment3Length - config.reader.segmentBoundary * 3;
+
+    return [
+        [((h1 - segment1Length / 2) + 180) % 180, h1 + segment1Length / 2],
+        [h2 - segment2Length / 2, h2 + segment2Length / 2],
+        [h3 - segment3Length / 2, (h3 + segment3Length / 2) % 180]
+    ];
+}
+
+export function hsv(h, s, v) {
+    return `${h * 2}° ${s / 255 * 100}% ${v / 255 * 100}%`
+}
 
 export function rgb2hsv(r, g, b) {
     r /= 255;
@@ -19,22 +41,19 @@ export function rgb2hsv(r, g, b) {
 
     let H, S, V;
 
+    V = max;
+    S = V === 0 ? 0 : (V - min) / V;
     if (max === min) H = 0;
-    else if (max === r) H = ((g - b) / (max - min)) * 180 / 6;
-    else if (max === g) H = (2 + (b - r) / (max - min)) * 180 / 6;
-    else if (max === b) H = (4 + (b - r) / (max - min)) * 180 / 6;
+    else if (V === r) H = 60 * (g - b) / (V - min);
+    else if (V === g) H = 120 + 60 * (b - r) / (V - min);
+    else if (V === b) H = 240 + 60 * (r - g) / (V - min);
 
-    if (H < 0) H += 180;
-
-    if (max === 0) S = 0;
-    else S = 255 * (max - min) / max;
-
-    V = 255 * max;
+    if (H < 0) H += 360;
 
     return {
-        h: H,
-        s: S,
-        v: V
+        h: H / 2,
+        s: S * 255,
+        v: V * 255
     };
 }
 
