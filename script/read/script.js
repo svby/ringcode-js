@@ -135,9 +135,18 @@ function initCapture() {
     const bgModal = document.querySelector("#cam-modal .modal-background");
     const cancelModal = document.querySelector("#modal-cancel");
     const takePic = document.querySelector("#modal-takepic");
-    closeModal.addEventListener("click", () => modal.classList.remove("is-active"));
-    cancelModal.addEventListener("click", () => modal.classList.remove("is-active"));
-    bgModal.addEventListener("click", () => modal.classList.remove("is-active"));
+    const video = document.getElementById("video");
+
+    const exit = () => {
+        video.pause();
+        modal.classList.remove("is-active");
+    };
+
+
+    closeModal.addEventListener("click", exit);
+    cancelModal.addEventListener("click", exit);
+    bgModal.addEventListener("click", exit);
+
     pic.addEventListener("click", () => {
         modal.classList.add("is-active");
 
@@ -147,7 +156,6 @@ function initCapture() {
                 video.play();
             });
     });
-    const video = document.getElementById("video");
     const canvas = document.createElement("canvas");
 
     takePic.addEventListener("click", ev => {
