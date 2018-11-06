@@ -60,7 +60,6 @@ function log(tag, message) {
 
 function matToCanvas(mat) {
     const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
 
     cv.imshow(canvas, mat);
 
@@ -129,8 +128,50 @@ function begin() {
     if (file) reader.readAsDataURL(file);
 }
 
+function initCapture() {
+    const pic = document.getElementById("camera");
+    const modal = document.getElementById("cam-modal");
+    const closeModal = document.querySelector("#cam-modal .modal-close");
+    const bgModal = document.querySelector("#cam-modal .modal-background");
+    const cancelModal = document.querySelector("#modal-cancel");
+    const takePic = document.querySelector("#modal-takepic");
+    closeModal.addEventListener("click", () => modal.classList.remove("is-active"));
+    cancelModal.addEventListener("click", () => modal.classList.remove("is-active"));
+    bgModal.addEventListener("click", () => modal.classList.remove("is-active"));
+    pic.addEventListener("click", () => {
+        modal.classList.add("is-active");
+    });
+    const video = document.getElementById("video");
+    const canvas = document.createElement("canvas");
+
+    navigator.mediaDevices.getUserMedia({video: true, audio: false})
+        .then(stream => {
+            video.srcObject = stream;
+            video.play();
+        });
+
+    takePic.addEventListener("click", ev => {
+        const context = canvas.getContext("2d");
+
+        if (video.videoHeight) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const data = canvas.toDataURL("image/png");
+            modal.classList.remove("is-active");
+            loadImage(data, image => process(image));
+        }
+
+        ev.preventDefault();
+    })
+}
+
 function init() {
     log("cv", "Loaded");
+
+    initCapture();
 
     const uploader = document.getElementById("upload");
     uploader.disabled = false;

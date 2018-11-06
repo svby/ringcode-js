@@ -15,6 +15,23 @@
     <link rel="stylesheet" href="style/github-corners.css"/>
 </head>
 <body>
+<div class="modal" id="cam-modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="modal-card">
+            <section class="modal-card-body">
+                <div class="camera">
+                    <video id="video" class="is-loading">Video stream not available.</video>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" id="modal-takepic">Take photo</button>
+                <button class="button" id="modal-cancel">Cancel</button>
+            </footer>
+        </div>
+    </div>
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
 <div class="footer-flex">
     <section class="section">
         <a href="https://github.com/notiocide/ringcode" class="github-corner" title="View source on GitHub"
@@ -54,19 +71,26 @@
                         <div class="field is-fullwidth">
                             <div class="control">
                                 <label class="label" for="upload">Image</label>
-                                <div class="file has-name is-fullwidth">
-                                    <label class="file-label">
-                                        <input class="file-input" type="file" accept="image/png, image/jpeg"
-                                               name="image"
-                                               id="upload" disabled>
-                                        <span class="file-cta">
+                                <div id="file-span">
+                                    <div class="file has-name is-fullwidth">
+                                        <label class="file-label">
+                                            <input class="file-input" type="file" accept="image/png, image/jpeg"
+                                                   name="image"
+                                                   id="upload" disabled>
+                                            <span class="file-cta">
                                         <span class="file-icon">
                                             <i class="fas fa-upload"></i>
                                         </span>
                                         <span class="file-label">Select an image</span>
                                     </span>
-                                        <span class="file-name" id="upload-name">None</span>
-                                    </label>
+                                            <span class="file-name" id="upload-name">None</span>
+                                        </label>
+                                    </div>
+                                    <a class="button is-link" id="camera">
+                                        <span class="icon">
+                                            <i class="fas fa-camera"></i>
+                                        </span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -84,7 +108,7 @@
             </div>
             <div class="field">
                 <label class="label" for="data">Data</label>
-                <textarea class="textarea is-normal" id="data" disabled></textarea>
+                <textarea class="textarea is-normal" id="data" readonly></textarea>
             </div>
         </div>
     </section>

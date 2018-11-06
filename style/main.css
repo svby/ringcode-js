@@ -85,3 +85,16 @@ div#title-with-link a {
     font-weight: bolder;
     font-family: "Ubuntu Mono", monospace;
 }
+
+div#file-span {
+    display: flex;
+    width: 100%;
+}
+
+div#file-span .file {
+    flex-grow: 1;
+}
+
+div#file-span a {
+    margin-left: 10px;
+}
