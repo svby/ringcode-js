@@ -140,15 +140,15 @@ function initCapture() {
     bgModal.addEventListener("click", () => modal.classList.remove("is-active"));
     pic.addEventListener("click", () => {
         modal.classList.add("is-active");
+
+        navigator.mediaDevices.getUserMedia({video: true, audio: false})
+            .then(stream => {
+                video.srcObject = stream;
+                video.play();
+            });
     });
     const video = document.getElementById("video");
     const canvas = document.createElement("canvas");
-
-    navigator.mediaDevices.getUserMedia({video: true, audio: false})
-        .then(stream => {
-            video.srcObject = stream;
-            video.play();
-        });
 
     takePic.addEventListener("click", ev => {
         const context = canvas.getContext("2d");
@@ -168,7 +168,12 @@ function initCapture() {
     })
 }
 
+let initialized = false;
+
 function init() {
+    if (initialized) return;
+    initialized = true;
+
     log("cv", "Loaded");
 
     initCapture();
@@ -184,3 +189,4 @@ const cvScript = document.getElementById("cv");
 cvScript.addEventListener("load", () => {
     init();
 });
+if (window.cvLoaded) init();
