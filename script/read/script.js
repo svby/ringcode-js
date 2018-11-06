@@ -1,13 +1,27 @@
 import detectSquare from "./detectSquare.js";
 import Utf8Adapter from "../adapter/utf8Adapter.js";
 import * as util from '../util.js';
+import process0 from "./processors/process0.js";
 import CmyReader from "./readers/cmyReader.js";
+import RgbReader from "./readers/rgbReader.js";
 
 const readers = Object.freeze({
     "cmy": new CmyReader()
 });
 
 function process(source) {
+    const selected = document.getElementById("processor");
+
+    let processor;
+    switch (selected.value) {
+        case "rgb":
+            processor = process0(new RgbReader());
+            break;
+        case "cmy":
+        default:
+            processor = process0(new CmyReader());
+    }
+
     display(source);
 
     let image;
@@ -25,7 +39,7 @@ function process(source) {
 
     display(bgr);
 
-    const res = detectSquare(readers["cmy"], bgr, {
+    const res = detectSquare(processor, bgr, {
         steps: util.config.showSteps,
         display: display,
         displayStep: util.config.showSteps ? display : () => {
@@ -194,7 +208,5 @@ function init() {
 document.getElementById("data").value = document.getElementById("log").value = "";
 
 const cvScript = document.getElementById("cv");
-cvScript.addEventListener("load", () => {
-    init();
-});
+cvScript.addEventListener("load", init);
 if (window.cvLoaded) init();

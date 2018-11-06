@@ -59,11 +59,12 @@
                     <div class="side-flex">
                         <div class="field">
                             <div class="control">
-                                <label class="label" for="method">Type</label>
+                                <label class="label" for="processor">Processor</label>
                                 <div class="select">
-                                    <select id="method" disabled>
+                                    <select id="processor">
+                                        <option value="cmy" selected>process0 (CMY only)</option>
+                                        <option value="rgb">process0 (RGB only)</option>
                                         <!--<option value="bw">Black</option>-->
-                                        <option value="cmy" selected>CMY</option>
                                         <!--<option value="rgb">RGB</option>-->
                                     </select>
                                 </div>
@@ -90,6 +91,7 @@
                                     <a class="button is-link" id="camera">
                                         <span class="icon">
                                             <i class="fas fa-camera"></i>
+                                            Camera
                                         </span>
                                     </a>
                                 </div>

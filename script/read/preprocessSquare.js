@@ -1,7 +1,7 @@
 import process0 from "./processors/process0.js";
 import * as util from "../util.js";
 
-export default function preprocessSquare(reader, image, config) {
+export default function preprocessSquare(processor, image, config) {
     config.log();
 
     let gray;
@@ -212,7 +212,7 @@ export default function preprocessSquare(reader, image, config) {
     white.delete();
     hsv.delete();
 
-    const result = process0(reader, res, bestCircle, maxXy, config);
+    const result = processor(res, bestCircle, maxXy, config);
 
     res.delete();
 

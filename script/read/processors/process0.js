@@ -35,60 +35,63 @@ function colorDistance(h1, s1, v1, h2, s2, v2) {
     return Math.min(number, 180 - number);
 }
 
-export default function process0(reader, image, centerAnchor, cornerAnchor, config) {
-    config.log();
-    config.log("p0", "Using ring processor process0");
-    config.log("p0", `Using reader ${reader.name}`);
+export default function process0(reader) {
+    return function (image, centerAnchor, cornerAnchor, config) {
+        config.log();
+        config.log("p0", "Using ring processor process0");
+        config.log("p0", `Using reader ${reader.name}`);
 
-    let buffer = [];
+        let buffer = [];
 
-    let copy = image.clone();
-    cv.GaussianBlur(copy, copy, new cv.Size(7, 7), 2, 2);
+        let copy = image.clone();
+        cv.GaussianBlur(copy, copy, new cv.Size(7, 7), 2, 2);
 
-    const scale = (centerAnchor.radius) / util.arcRadius(0);
-    config.log("p0", `Tag scale: ${scale}`);
+        const scale = (centerAnchor.radius) / util.arcRadius(0);
+        config.log("p0", `Tag scale: ${scale}`);
 
-    for (let layer = 1; layer <= 200; ++layer) {
-        const radius = util.arcRadius(layer) * scale;
-        if (centerAnchor.x - radius <= cornerAnchor || centerAnchor.y - radius <= cornerAnchor) {
-            break;
+        for (let layer = 1; layer <= 200; ++layer) {
+            const radius = util.arcRadius(layer) * scale;
+            if (centerAnchor.x - radius <= cornerAnchor || centerAnchor.y - radius <= cornerAnchor) {
+                break;
+            }
+            const segments = util.segments(layer);
+
+            const segmentDelta = 2 * Math.PI / segments;
+
+            for (let segment = 0; segment < segments; ++segment) {
+                const angle = segmentDelta * segment + (segmentDelta / 2);
+
+                const x = Math.round(Math.sin(angle) * radius);
+                const y = Math.round(Math.cos(angle) * radius);
+
+                const color2 = avgColor(copy, centerAnchor.x + x, centerAnchor.y - y);
+                const converted = util.rgb2hsv(color2[0], color2[1], color2[2]);
+                console.log(`${layer} ${segment} ${util.hsv(converted.h, converted.s, converted.v)}`);
+
+                reader.process(buffer, converted.h, converted.s, converted.v);
+
+                cv.circle(copy, new cv.Point(centerAnchor.x + x, centerAnchor.y - y), 2, new cv.Scalar(255, 0, 0));
+            }
         }
-        const segments = util.segments(layer);
 
-        const segmentDelta = 2 * Math.PI / segments;
+        config.log("p0", "Tag decoded to bit buffer");
 
-        for (let segment = 0; segment < segments; ++segment) {
-            const angle = segmentDelta * segment + (segmentDelta / 2);
+        config.displayStep(copy);
 
-            const x = Math.round(Math.sin(angle) * radius);
-            const y = Math.round(Math.cos(angle) * radius);
+        while (buffer.length !== 0 && buffer[buffer.length - 1] === 0) buffer.pop();
+        buffer.reverse();
 
-            const color2 = avgColor(copy, centerAnchor.x + x, centerAnchor.y - y);
-            const converted = util.rgb2hsv(color2[0], color2[1], color2[2]);
+        let bits = new Uint8Array(Math.ceil(buffer.length / 8));
 
-            reader.process(buffer, converted.h, converted.s, converted.v);
-
-            cv.circle(copy, new cv.Point(centerAnchor.x + x, centerAnchor.y - y), 2, new cv.Scalar(255, 0, 0));
+        for (let i = 0; i < buffer.length; ++i) {
+            if (buffer[buffer.length - 1 - i] === 1) {
+                bits[bits.length - 1 - Math.floor(i / 8)] |= (1 << i % 8);
+            }
         }
+
+        config.log("p0", "Tag decoded to byte buffer");
+        config.log("p0", "Done");
+
+        return bits;
     }
-
-    config.log("p0", "Tag decoded to bit buffer");
-
-    config.displayStep(copy);
-
-    while (buffer.length !== 0 && buffer[buffer.length - 1] === 0) buffer.pop();
-    buffer.reverse();
-
-    let bits = new Uint8Array(Math.ceil(buffer.length / 8));
-
-    for (let i = 0; i < buffer.length; ++i) {
-        if (buffer[buffer.length - 1 - i] === 1) {
-            bits[bits.length - 1 - Math.floor(i / 8)] |= (1 << i % 8);
-        }
-    }
-
-    config.log("p0", "Tag decoded to byte buffer");
-    config.log("p0", "Done");
-
-    return bits;
 }

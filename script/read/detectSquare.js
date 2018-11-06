@@ -1,6 +1,6 @@
 import preprocessSquare from "./preprocessSquare.js";
 
-export default function detectSquare(reader, img, config) {
+export default function detectSquare(processor, img, config) {
     config.log();
 
     let copy;
@@ -126,7 +126,7 @@ export default function detectSquare(reader, img, config) {
 
     cv.resize(warped, warped, new cv.Size(550, 550));
 
-    const result = preprocessSquare(reader, warped, config);
+    const result = preprocessSquare(processor, warped, config);
 
     warped.delete();
     thresholded.delete();
