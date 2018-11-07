@@ -1,9 +1,9 @@
 import * as util from '../../util.js'
 
-const color1 = "#000000";
-const color2 = "#0000FF";
-const color3 = "#00FF00";
-const color4 = "#FF0000";
+const color1 = "#FF0000";
+const color2 = "#00FF00";
+const color3 = "#0000FF";
+const color4 = "#000000";
 
 export default class RgbGenerator {
 
@@ -49,11 +49,11 @@ export default class RgbGenerator {
 
             let color;
             if (bits[0] === 1 && bits[1] === 1) {
-                color = color4;
+                color = color1;
             } else if (bits[0] === 0 && bits[1] === 1) {
-                color = color3;
-            } else if (bits[0] === 1 && bits[1] === 0) {
                 color = color2;
+            } else if (bits[0] === 1 && bits[1] === 0) {
+                color = color3;
             } else if (bits[0] === 0 && bits[1] === 0) {
             }
             if (typeof color !== "undefined") {

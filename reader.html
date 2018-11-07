@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ringcode | read</title>
     <script type="module" src="script/read/script.js"></script>
+    <!-- https://docs.opencv.org/master/opencv.js -->
     <script id="cv" async defer onload="window.cvLoaded = true;" src="https://docs.opencv.org/master/opencv.js"
             type="text/javascript"></script>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
@@ -64,6 +65,7 @@
                                     <select id="processor">
                                         <option value="cmy" selected>process0 (CMY only)</option>
                                         <option value="rgb">process0 (RGB only)</option>
+                                        <option value="0g">process0g</option>
                                         <!--<option value="bw">Black</option>-->
                                         <!--<option value="rgb">RGB</option>-->
                                     </select>
@@ -91,7 +93,6 @@
                                     <a class="button is-link" id="camera">
                                         <span class="icon">
                                             <i class="fas fa-camera"></i>
-                                            Camera
                                         </span>
                                     </a>
                                 </div>

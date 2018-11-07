@@ -4,6 +4,7 @@ import * as util from '../util.js';
 import process0 from "./processors/process0.js";
 import CmyReader from "./readers/cmyReader.js";
 import RgbReader from "./readers/rgbReader.js";
+import process0g from "./processors/process0g.js";
 
 const readers = Object.freeze({
     "cmy": new CmyReader()
@@ -14,6 +15,9 @@ function process(source) {
 
     let processor;
     switch (selected.value) {
+        case "0g":
+            processor = process0g();
+            break;
         case "rgb":
             processor = process0(new RgbReader());
             break;
